@@ -3,7 +3,7 @@ package HandyBus.HandyBus.Service;
 import HandyBus.HandyBus.DTO.UserSignUpRequest;
 import HandyBus.HandyBus.DTO.UserSignUpResponse;
 import HandyBus.HandyBus.Domain.UserDomain;
-import HandyBus.HandyBus.Repository.UserRepositoryImpl;
+import HandyBus.HandyBus.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,34 +18,34 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final UserRepositoryImpl userRepositoryImpl;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepositoryImpl userRepositoryImpl, PasswordEncoder passwordEncoder) {
-        this.userRepositoryImpl = userRepositoryImpl;
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserSignUpResponse createUser(UserSignUpRequest user) {
-        userRepositoryImpl.save(toDomain(user));
+        userRepository.save(toDomain(user));
         return UserSignUpResponse.builder()
                 .name(user.getName()).build();
     }
 
     @Override
     public Optional<UserDomain> getUserById(Long id) {
-        return userRepositoryImpl.findById(id);
+        return userRepository.findById(id);
     }
 
     @Override
     public List<UserDomain> getAllUsers() {
-        return userRepositoryImpl.findAll();
+        return userRepository.findAll();
     }
 
     @Override
     public void deleteUser(Long id) {
-        userRepositoryImpl.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     @Override

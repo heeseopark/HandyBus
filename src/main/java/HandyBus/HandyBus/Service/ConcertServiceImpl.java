@@ -1,7 +1,7 @@
 package HandyBus.HandyBus.Service;
 
 import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
-import HandyBus.HandyBus.Repository.ConcertRepositoryImpl;
+import HandyBus.HandyBus.Repository.ConcertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ConcertServiceImpl implements ConcertService{
 
-    private final ConcertRepositoryImpl concertServiceImpl;
+    private final ConcertRepository concertRepository;
 
     @Autowired
-    public ConcertServiceImpl(ConcertRepositoryImpl concertRepositoryImpl){
-        this.concertServiceImpl = concertRepositoryImpl;
+    public ConcertServiceImpl(ConcertRepository concertRepository){
+        this.concertRepository = concertRepository;
     }
 
     @Override
