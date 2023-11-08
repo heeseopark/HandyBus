@@ -20,6 +20,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	// Spring Security Core
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Spring Security Test for unit testing
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
