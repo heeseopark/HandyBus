@@ -2,10 +2,14 @@ package HandyBus.HandyBus.Domain;
 
 import HandyBus.HandyBus.Domain.Subclass.Address;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
+@Getter
 public class ConcertDomain {
 
     @Id
@@ -31,10 +35,12 @@ public class ConcertDomain {
     @Column(nullable = false)
     private Address location; // Embeddable Address class
 
-    // Getters and setters for all fields
-
-    // Assuming Address is a class marked with @Embeddable annotation
-
-
-    // Constructor, getters, and setters...
+    @Builder
+    public ConcertDomain(String name, LocalDate date, LocalTime startTime, LocalTime endTime, Address location){
+        this.name = name;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.location = location;
+    }
 }

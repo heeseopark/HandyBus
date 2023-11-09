@@ -1,10 +1,14 @@
 package HandyBus.HandyBus.Service;
 
-import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
+import HandyBus.HandyBus.DTO.ConcertDTO;
+import HandyBus.HandyBus.Domain.ConcertDomain;
 import HandyBus.HandyBus.Repository.ConcertRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -18,10 +22,52 @@ public class ConcertServiceImpl implements ConcertService{
     }
 
     @Override
-    public ConcertSignUpDTO createConcert(ConcertSignUpDTO concert){
+    public ConcertDTO createConcert(ConcertDTO concert){
 
-        // fill this code
+        concertRepository.save(toDomain(concert));
 
-        return concert;
+        return ConcertDTO.builder()
+                .name(concert.getName())
+                .date(concert.getDate())
+                .startTime(concert.getStartTime())
+                .endTime((concert.getEndTime()))
+                .location(concert.getLocation())
+                .build();
+    }
+
+    public List<ConcertDTO> getAll(){
+        List<ConcertDTO> concertDTOList = new ArrayList<>();
+
+        for (ConcertDomain concertDomain : concertRepository.findAll()){
+            // consider sorting
+            concertDTOList.add(toDTO(concertDomain));
+
+        }
+
+        return concertDTOList;
+    }
+
+    @Override
+    public ConcertDomain toDomain(ConcertDTO concert){
+
+        return ConcertDomain.builder()
+                .name(concert.getName())
+                .date(concert.getDate())
+                .startTime(concert.getStartTime())
+                .endTime((concert.getEndTime()))
+                .location(concert.getLocation())
+                .build();
+    }
+
+    @Override
+    public ConcertDTO toDTO(ConcertDomain concertDomain){
+
+        return ConcertDTO.builder()
+                .name(concertDomain.getName())
+                .date((concertDomain.getDate()))
+                .startTime((concertDomain.getStartTime()))
+                .endTime((concertDomain.getEndTime()))
+                .location((concertDomain.getLocation()))
+                .build();
     }
 }

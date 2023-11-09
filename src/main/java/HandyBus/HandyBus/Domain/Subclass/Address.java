@@ -1,8 +1,10 @@
 package HandyBus.HandyBus.Domain.Subclass;
 
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 
 @Embeddable
+@AllArgsConstructor
 public class Address {
     private String street;
     private String city;

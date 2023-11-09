@@ -1,7 +1,7 @@
 package HandyBus.HandyBus.Service;
 
-import HandyBus.HandyBus.DTO.UserSignUpRequest;
-import HandyBus.HandyBus.DTO.UserSignUpResponse;
+import HandyBus.HandyBus.DTO.UserSignUpRequestDTO;
+import HandyBus.HandyBus.DTO.UserSignUpResponseDTO;
 import HandyBus.HandyBus.Domain.UserDomain;
 import HandyBus.HandyBus.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +27,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserSignUpResponse createUser(UserSignUpRequest user) {
+    public UserSignUpResponseDTO createUser(UserSignUpRequestDTO user) {
         userRepository.save(toDomain(user));
-        return UserSignUpResponse.builder()
+        return UserSignUpResponseDTO.builder()
                 .name(user.getName()).build();
     }
 
@@ -49,14 +49,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDomain toDomain(UserSignUpRequest userSignUpRequest) {
+    public UserDomain toDomain(UserSignUpRequestDTO userSignUpRequestDTO) {
         return UserDomain.builder()
-                .email(userSignUpRequest.getEmail())
-                .name(userSignUpRequest.getName())
-                .passwordHash(passwordEncoder.encode(userSignUpRequest.getPassword()))
-                .phoneNumber(Integer.parseInt(userSignUpRequest.getPhoneNumber()))
-                .address(userSignUpRequest.getAddress())
-                .gender(userSignUpRequest.getGender())
+                .email(userSignUpRequestDTO.getEmail())
+                .name(userSignUpRequestDTO.getName())
+                .passwordHash(passwordEncoder.encode(userSignUpRequestDTO.getPassword()))
+                .phoneNumber(Integer.parseInt(userSignUpRequestDTO.getPhoneNumber()))
+                .address(userSignUpRequestDTO.getAddress())
+                .gender(userSignUpRequestDTO.getGender())
                 .build();
     }
 

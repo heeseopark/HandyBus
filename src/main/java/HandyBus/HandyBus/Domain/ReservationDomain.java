@@ -1,5 +1,6 @@
 package HandyBus.HandyBus.Domain;
 
+import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,12 +40,7 @@ public class ReservationDomain {
     // Getters and setters for all fields
 
     // ProceedStatus enum definition (assuming it's an inner enum, otherwise it could be in its own file)
-    public enum ProceedStatus {
-        PENDING,
-        CONFIRMED,
-        CANCELLED,
-        COMPLETED
-    }
+
 
     // Constructor, getters, and setters...
 }
