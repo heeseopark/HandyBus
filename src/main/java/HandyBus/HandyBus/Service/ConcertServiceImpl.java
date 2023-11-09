@@ -55,7 +55,7 @@ public class ConcertServiceImpl implements ConcertService{
                 .date(concert.getDate())
                 .startTime(concert.getStartTime())
                 .endTime((concert.getEndTime()))
-                .location(concert.getLocation())
+                .locationAddress(concert.getLocation())
                 .build();
     }
 
@@ -67,7 +67,7 @@ public class ConcertServiceImpl implements ConcertService{
                 .date((concertDomain.getDate()))
                 .startTime((concertDomain.getStartTime()))
                 .endTime((concertDomain.getEndTime()))
-                .location((concertDomain.getLocation()))
+                .location((concertDomain.getLocationAddress()))
                 .build();
     }
 }

@@ -2,7 +2,6 @@ package HandyBus.HandyBus.Service;
 
 import HandyBus.HandyBus.DTO.UserSignUpRequestDTO;
 import HandyBus.HandyBus.DTO.UserSignUpResponseDTO;
-import HandyBus.HandyBus.Domain.Subclass.Address;
 import HandyBus.HandyBus.Domain.Subclass.Gender;
 import HandyBus.HandyBus.Domain.UserDomain;
 import HandyBus.HandyBus.Repository.UserRepository;
@@ -36,13 +35,6 @@ public class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        Address testAddress = new Address(
-                "1234 Test St",
-                "Test City",
-                "TS",
-                "12345",
-                "Test Country"
-        );
 
         // Setup test data using constructor and the enum for gender
         userSignUpRequestDTO = new UserSignUpRequestDTO(
@@ -50,7 +42,7 @@ public class UserServiceImplTest {
                 "Test User",
                 "password123",
                 "1234567890",
-                testAddress,
+                "12345",
                 Gender.MALE // Using the enum here
         );
 
@@ -60,7 +52,7 @@ public class UserServiceImplTest {
                 userSignUpRequestDTO.getName(),
                 encodedPassword, // Mock the encoding
                 Integer.parseInt(userSignUpRequestDTO.getPhoneNumber()),
-                userSignUpRequestDTO.getAddress(), // Directly passing the Address object
+                userSignUpRequestDTO.getPostCode(), // Directly passing the Address object
                 userSignUpRequestDTO.getGender() // Directly passing the Gender enum
         );
     }

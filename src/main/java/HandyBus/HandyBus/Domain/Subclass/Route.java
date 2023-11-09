@@ -15,8 +15,8 @@ public class Route {
     @CollectionTable(name = "bus_route_locations", joinColumns = @JoinColumn(name = "bus_id"))
     private List<LocationTime> locationTimes; // List of location and time information
 
-    public List<Address> getLocations() {
-        return locationTimes.stream().map(LocationTime.getAddress()).collect(Collectors.toList());
+    public List<String> getLocations() {
+        return locationTimes.stream().map(LocationTime.getPostCode()).collect(Collectors.toList());
     }
 
     public List<LocalTime> getTimes() {

@@ -1,0 +1,4 @@
+package HandyBus.HandyBus.Service;
+
+public interface IdolService {
+}

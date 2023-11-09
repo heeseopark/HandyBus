@@ -1,6 +1,5 @@
 package HandyBus.HandyBus.Domain;
 
-import HandyBus.HandyBus.Domain.Subclass.Address;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,14 +32,14 @@ public class ConcertDomain {
 
     @Embedded
     @Column(nullable = false)
-    private Address location; // Embeddable Address class
+    private String locationAddress;
 
     @Builder
-    public ConcertDomain(String name, LocalDate date, LocalTime startTime, LocalTime endTime, Address location){
+    public ConcertDomain(String name, LocalDate date, LocalTime startTime, LocalTime endTime, String locationAddress){
         this.name = name;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
+        this.locationAddress = locationAddress;
     }
 }

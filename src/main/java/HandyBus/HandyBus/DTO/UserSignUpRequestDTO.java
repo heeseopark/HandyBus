@@ -1,6 +1,5 @@
 package HandyBus.HandyBus.DTO;
 
-import HandyBus.HandyBus.Domain.Subclass.Address;
 import HandyBus.HandyBus.Domain.Subclass.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +14,7 @@ public class UserSignUpRequestDTO {
     private String name;
     private String password;
     private String phoneNumber;
-    private Address address;
+    private String postCode;
     private Gender gender;
 
 }

@@ -1,6 +1,5 @@
 package HandyBus.HandyBus.Domain;
 
-import HandyBus.HandyBus.Domain.Subclass.Address;
 import HandyBus.HandyBus.Domain.Subclass.Gender;
 import lombok.*;
 import jakarta.persistence.*;
@@ -28,9 +27,8 @@ public class UserDomain {
     @Column(nullable = false)
     private int phoneNumber;
 
-    @Embedded
     @Column(nullable = false)
-    private Address address;
+    private String postCode;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -41,12 +39,12 @@ public class UserDomain {
 
 
     @Builder
-    public UserDomain(String name, String email, String passwordHash, int phoneNumber, Address address, Gender gender){
+    public UserDomain(String name, String email, String passwordHash, int phoneNumber, String postCode, Gender gender){
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
         this.phoneNumber = phoneNumber;
-        this.address = address;
+        this.postCode = postCode;
         this.gender = gender;
     }
 

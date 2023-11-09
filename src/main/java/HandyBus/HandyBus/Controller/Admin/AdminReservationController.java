@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("admin/reservations")
+@RequestMapping("admin/reservationsignup")
 public class AdminReservationController {
 
     private final ReservationServiceImpl reservationServiceImpl;
@@ -25,12 +25,6 @@ public class AdminReservationController {
         this.concertServiceImpl = concertServiceImpl;
     }
 
-    // return list of concerts and choose what concert will add a reservation
-    @GetMapping("/signup")
-    public ResponseEntity<List<ConcertDTO>> getConcertList() {
-        List<ConcertDTO> concertList = concertServiceImpl.getAll(); // This should call your service layer to get the list
-        return new ResponseEntity<>(concertList, HttpStatus.OK);
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<ReservationSignUpResponseDTO> createReservation(@RequestBody ReservationSignUpRequestDTO reservationSignUpRequestDTO){

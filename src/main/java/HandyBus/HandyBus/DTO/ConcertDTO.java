@@ -1,7 +1,6 @@
 package HandyBus.HandyBus.DTO;
 
 
-import HandyBus.HandyBus.Domain.Subclass.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +17,5 @@ public class ConcertDTO {
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
-    private Address location;
+    private String location;
 }

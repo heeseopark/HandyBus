@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
                 .name(userSignUpRequestDTO.getName())
                 .passwordHash(passwordEncoder.encode(userSignUpRequestDTO.getPassword()))
                 .phoneNumber(Integer.parseInt(userSignUpRequestDTO.getPhoneNumber()))
-                .address(userSignUpRequestDTO.getAddress())
+                .postCode(userSignUpRequestDTO.getPostCode())
                 .gender(userSignUpRequestDTO.getGender())
                 .build();
     }
