@@ -25,8 +25,15 @@ public class AdminReservationController {
         this.concertServiceImpl = concertServiceImpl;
     }
 
+    public ResponseEntity<List<ConcertDTO>> getConcerts(){
 
-    @PostMapping("/signup")
+        List<ConcertDTO> concertList = concertServiceImpl.findAll();
+
+        return new ResponseEntity<>(concertList, HttpStatus.OK);
+    }
+
+
+    @PostMapping
     public ResponseEntity<ReservationSignUpResponseDTO> createReservation(@RequestBody ReservationSignUpRequestDTO reservationSignUpRequestDTO){
 
         ReservationSignUpResponseDTO newReservation = reservationServiceImpl.createReservation(reservationSignUpRequestDTO);

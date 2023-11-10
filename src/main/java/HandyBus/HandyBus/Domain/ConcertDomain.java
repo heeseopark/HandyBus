@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,10 +14,11 @@ public class ConcertDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Primary key for the concert entity
+    private Long id;
 
+    @ManyToOne
     @JoinColumn(name = "idol_id")
-    private Long idolID; // Assuming there's an IdolDomain entity for the idol
+    private IdolDomain idol;
 
     @Column(nullable = false, length = 100)
     private String name; // Concert name
@@ -33,6 +35,11 @@ public class ConcertDomain {
     @Embedded
     @Column(nullable = false)
     private String locationAddress;
+
+    @OneToMany(mappedBy = "concertID")
+    private List<ReservationDomain> reservationList; // One-to-many relationship with ReservationDomain
+
+    private String imageUrl;
 
     @Builder
     public ConcertDomain(String name, LocalDate date, LocalTime startTime, LocalTime endTime, String locationAddress){

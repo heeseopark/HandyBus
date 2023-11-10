@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -18,4 +19,6 @@ public class ConcertDTO {
     private LocalTime startTime;
     private LocalTime endTime;
     private String location;
+    private String imageUrl;
+    private List<ReservationDTO> reservations;
 }

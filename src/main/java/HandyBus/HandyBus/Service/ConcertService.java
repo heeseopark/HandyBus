@@ -9,9 +9,6 @@ public interface ConcertService {
 
     ConcertDTO createConcert(ConcertDTO concert);
 
-    List<ConcertDTO> getAll();
+    List<ConcertDTO> findAll();
 
-    ConcertDomain toDomain(ConcertDTO concertDTO);
-
-    ConcertDTO toDTO(ConcertDomain concertDomain);
 }

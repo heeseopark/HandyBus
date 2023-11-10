@@ -2,10 +2,13 @@ package HandyBus.HandyBus.Domain;
 
 import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Getter
 public class ReservationDomain {
 
     @Id
@@ -20,7 +23,7 @@ public class ReservationDomain {
     private List<BusDomain> busIDList; // One-to-many relationship with BusDomain
 
     @OneToMany(mappedBy = "reservation")
-    private List<UserDomain> userList; // One-to-many relationship with UserDomain
+    private List<UserReservationDomain> userReservationList;
 
     @Column(nullable = false)
     private LocalDateTime requiredArriveTime; // Using LocalDateTime for date-time fields

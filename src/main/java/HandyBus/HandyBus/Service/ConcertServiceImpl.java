@@ -35,7 +35,8 @@ public class ConcertServiceImpl implements ConcertService{
                 .build();
     }
 
-    public List<ConcertDTO> getAll(){
+    @Override
+    public List<ConcertDTO> findAll(){
         List<ConcertDTO> concertDTOList = new ArrayList<>();
 
         for (ConcertDomain concertDomain : concertRepository.findAll()){
@@ -47,8 +48,7 @@ public class ConcertServiceImpl implements ConcertService{
         return concertDTOList;
     }
 
-    @Override
-    public ConcertDomain toDomain(ConcertDTO concert){
+    private ConcertDomain toDomain(ConcertDTO concert){
 
         return ConcertDomain.builder()
                 .name(concert.getName())
@@ -59,8 +59,7 @@ public class ConcertServiceImpl implements ConcertService{
                 .build();
     }
 
-    @Override
-    public ConcertDTO toDTO(ConcertDomain concertDomain){
+    private ConcertDTO toDTO(ConcertDomain concertDomain){
 
         return ConcertDTO.builder()
                 .name(concertDomain.getName())

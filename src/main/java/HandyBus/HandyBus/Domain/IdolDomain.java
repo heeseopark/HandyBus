@@ -1,13 +1,13 @@
 package HandyBus.HandyBus.Domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 
 @Entity
+@Getter
 public class IdolDomain {
 
     @Id
@@ -15,8 +15,17 @@ public class IdolDomain {
     private Long id;
     private String name;
 
-    private List<String> members;
+    @ElementCollection
+    private List<String> members; // Assuming members are stored as a list of strings
 
+    @OneToMany(mappedBy = "idol")
+    private List<ConcertDomain> concertList;
 
+    @Builder
+    public IdolDomain(String name, List<String> members, List<ConcertDomain> concertList){
+        this.name = name;
+        this.members = members;
+        this.concertList = concertList;
+    }
 
 }
