@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ public class ConcertServiceImpl implements ConcertService{
         ConcertDomain createdConcert = concertRepository.save(toDomain(concert));
 
         return ConcertSignUpDTO.builder()
+                .id(createdConcert.getId())
                 .name(createdConcert.getName())
                 .date(createdConcert.getDate())
                 .startTime(createdConcert.getStartTime())
@@ -43,6 +46,25 @@ public class ConcertServiceImpl implements ConcertService{
                 .collect(Collectors.toList());
     }
 
+    public List<ConcertSignUpDTO> findUpcomingConcerts() {
+        LocalDate today = LocalDate.now(); // Get the current date
+
+        return concertRepository.findAll().stream()
+                .filter(concert -> concert.getDate().isAfter(today)) // Filter concerts with a date after today
+                .map(this::toSignUpDTO) // Convert to ConcertSignUpDTO
+                .collect(Collectors.toList());
+    }
+
+    public List<ConcertSignUpDTO> findAllSorted() {
+        return concertRepository.findAll().stream()
+                .sorted(Comparator.comparing(ConcertDomain::getDate)
+                        .thenComparing(ConcertDomain::getName))
+                .map(this::toSignUpDTO)
+                .collect(Collectors.toList());
+
+    }
+
+
 
     private ConcertDomain toDomain(ConcertSignUpDTO concertSignUpDTO){
 
@@ -56,14 +78,19 @@ public class ConcertServiceImpl implements ConcertService{
                 .build();
     }
 
-    private ConcertSignUpDTO toSignUpDTO(ConcertDomain concertDomain){
+    public ConcertSignUpDTO toSignUpDTO(ConcertDomain concertDomain){
 
         return ConcertSignUpDTO.builder()
+                .id(concertDomain.getId())
                 .name(concertDomain.getName())
                 .date((concertDomain.getDate()))
                 .startTime((concertDomain.getStartTime()))
                 .endTime((concertDomain.getEndTime()))
                 .location((concertDomain.getLocationAddress()))
                 .build();
+    }
+
+    public void deleteConcert(Long id) {
+        concertRepository.deleteById(id); // Assuming deleteById method is available in your repository
     }
 }

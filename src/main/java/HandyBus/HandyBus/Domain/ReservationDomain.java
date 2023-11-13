@@ -19,8 +19,8 @@ public class ReservationDomain {
     @JoinColumn(name = "concert_id")
     private ConcertDomain concertID; // Relation to ConcertDomain
 
-    @OneToMany(mappedBy = "reservation")
-    private List<BusDomain> busIDList; // One-to-many relationship with BusDomain
+    @OneToMany(mappedBy = "busID")
+    private List<BusDomain> busList; // One-to-many relationship with BusDomain
 
     @OneToMany(mappedBy = "reservation")
     private List<UserReservationDomain> userReservationList;

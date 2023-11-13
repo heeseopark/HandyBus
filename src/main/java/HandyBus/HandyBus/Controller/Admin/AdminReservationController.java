@@ -25,19 +25,20 @@ public class AdminReservationController {
         this.concertServiceImpl = concertServiceImpl;
     }
 
+    @GetMapping
     public ResponseEntity<List<ConcertSignUpDTO>> getConcerts(){
 
-        List<ConcertSignUpDTO> concertList = concertServiceImpl.findAll();
+        List<ConcertSignUpDTO> concertList = concertServiceImpl.findUpcomingConcerts();
 
         return new ResponseEntity<>(concertList, HttpStatus.OK);
     }
 
 
-    @PostMapping
-    public ResponseEntity<ReservationSignUpResponseDTO> createReservation(@RequestBody ReservationSignUpRequestDTO reservationSignUpRequestDTO){
-
-        ReservationSignUpResponseDTO newReservation = reservationServiceImpl.createReservation(reservationSignUpRequestDTO);
-
-        return new ResponseEntity<>(newReservation, HttpStatus.CREATED);
-    }
+//    @PostMapping
+//    public ResponseEntity<ReservationSignUpResponseDTO> createReservation(@RequestBody ReservationSignUpRequestDTO reservationSignUpRequestDTO){
+//
+//        ReservationSignUpResponseDTO newReservation = reservationServiceImpl.createReservation(reservationSignUpRequestDTO);
+//
+//        return new ResponseEntity<>(newReservation, HttpStatus.CREATED);
+//    }
 }

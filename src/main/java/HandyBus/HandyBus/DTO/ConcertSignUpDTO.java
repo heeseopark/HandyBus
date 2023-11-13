@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class ConcertSignUpDTO {
 
+    private Long id;
     private String name;
     private LocalDate date;
     private LocalTime startTime;

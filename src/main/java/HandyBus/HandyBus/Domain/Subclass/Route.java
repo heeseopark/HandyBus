@@ -11,16 +11,16 @@ import java.util.stream.Collectors;
 
 @Embeddable
 public class Route {
-    @ElementCollection
-    @CollectionTable(name = "bus_route_locations", joinColumns = @JoinColumn(name = "bus_id"))
-    private List<LocationTime> locationTimes; // List of location and time information
-
-    public List<String> getLocations() {
-        return locationTimes.stream().map(LocationTime.getPostCode()).collect(Collectors.toList());
-    }
-
-    public List<LocalTime> getTimes() {
-        return locationTimes.stream().map(LocationTime.getTime()).collect(Collectors.toList());
-    }
+//    @ElementCollection
+//    @CollectionTable(name = "bus_route_locations", joinColumns = @JoinColumn(name = "bus_id"))
+//    private List<LocationTime> locationTimes; // List of location and time information
+//
+//    public List<String> getLocations() {
+//        return locationTimes.stream().map(LocationTime.getPostCode()).collect(Collectors.toList());
+//    }
+//
+//    public List<LocalTime> getTimes() {
+//        return locationTimes.stream().map(LocationTime.getTime()).collect(Collectors.toList());
+//    }
 }
 

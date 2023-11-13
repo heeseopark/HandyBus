@@ -3,8 +3,10 @@ package HandyBus.HandyBus.Service;
 import HandyBus.HandyBus.DTO.UserSignUpRequestDTO;
 import HandyBus.HandyBus.DTO.UserSignUpResponseDTO;
 import HandyBus.HandyBus.Domain.Subclass.Gender;
+import HandyBus.HandyBus.Domain.Subclass.Region;
 import HandyBus.HandyBus.Domain.UserDomain;
 import HandyBus.HandyBus.Repository.UserRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,14 +49,19 @@ public class UserServiceImplTest {
         );
 
         // Domain object that should be returned after mapping, using constructor
+// Create the UserDomain object without setting the region
         userDomain = new UserDomain(
                 userSignUpRequestDTO.getEmail(),
                 userSignUpRequestDTO.getName(),
                 encodedPassword, // Mock the encoding
                 Integer.parseInt(userSignUpRequestDTO.getPhoneNumber()),
-                userSignUpRequestDTO.getPostCode(), // Directly passing the Address object
+                userSignUpRequestDTO.getPostCode(),
+                null, // Temporarily set the region to null
                 userSignUpRequestDTO.getGender() // Directly passing the Gender enum
         );
+
+        // code for setting region of the user domain
+
     }
 
 

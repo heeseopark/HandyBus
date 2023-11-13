@@ -22,23 +22,23 @@ public class ReservationServiceImpl {
         this.reservationRepository = reservationRepository;
     }
 
-    @Override
-    public ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO reservationSignUpRequestDTO){
-
-        return ;
-    }
+//    @Override
+//    public ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO reservationSignUpRequestDTO){
+//
+//        return null;
+//    }
 
     public List<ReservationDTO> getAll(){
 
-        return ;
+        return null;
     }
 
-    private ReservationDTO toDTO(ReservationDomain reservationDomain) {
-        // Implement this method based on your fields in ReservationDomain and ReservationDTO
-        return ReservationDTO.builder()
-                .countRegistered(reservationDomain.getCountRegistered())
-                .countPaid(reservationDomain.getCountPaid())
-                .proceedStatus(reservationDomain.getProceedStatus())
-                .build();
-    }
+//    private ReservationDTO toDTO(ReservationDomain reservationDomain) {
+//        // Implement this method based on your fields in ReservationDomain and ReservationDTO
+//        return ReservationDTO.builder()
+//                .countRegistered(reservationDomain.getCountRegistered())
+//                .countPaid(reservationDomain.getCountPaid())
+//                .proceedStatus(reservationDomain.getProceedStatus())
+//                .build();
+//    }
 }

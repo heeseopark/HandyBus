@@ -11,6 +11,10 @@ java {
 	sourceCompatibility = '17'
 }
 
+wrapper{
+	gradleVersion = "8.4"
+}
+
 repositories {
 	mavenCentral()
 }
@@ -26,7 +30,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	// Spring Security Test for unit testing
-	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation ('org.springframework.security:spring-security-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+	runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
