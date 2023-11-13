@@ -1,14 +1,15 @@
 package HandyBus.HandyBus.Service;
 
-import HandyBus.HandyBus.DTO.ConcertDTO;
+import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.Domain.ConcertDomain;
 import HandyBus.HandyBus.Repository.ConcertRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,46 +23,42 @@ public class ConcertServiceImpl implements ConcertService{
     }
 
     @Override
-    public ConcertDTO createConcert(ConcertDTO concert){
+    public ConcertSignUpDTO createConcert(ConcertSignUpDTO concert){
 
-        concertRepository.save(toDomain(concert));
+        ConcertDomain createdConcert = concertRepository.save(toDomain(concert));
 
-        return ConcertDTO.builder()
-                .name(concert.getName())
-                .date(concert.getDate())
-                .startTime(concert.getStartTime())
-                .endTime((concert.getEndTime()))
-                .location(concert.getLocation())
+        return ConcertSignUpDTO.builder()
+                .name(createdConcert.getName())
+                .date(createdConcert.getDate())
+                .startTime(createdConcert.getStartTime())
+                .endTime((createdConcert.getEndTime()))
+                .location(createdConcert.getLocationAddress())
                 .build();
     }
 
     @Override
-    public List<ConcertDTO> findAll(){
-        List<ConcertDTO> concertDTOList = new ArrayList<>();
-
-        for (ConcertDomain concertDomain : concertRepository.findAll()){
-            // consider sorting
-            concertDTOList.add(toDTO(concertDomain));
-
-        }
-
-        return concertDTOList;
+    public List<ConcertSignUpDTO> findAll() {
+        return concertRepository.findAll().stream()
+                .map(this::toSignUpDTO)
+                .collect(Collectors.toList());
     }
 
-    private ConcertDomain toDomain(ConcertDTO concert){
+
+    private ConcertDomain toDomain(ConcertSignUpDTO concertSignUpDTO){
 
         return ConcertDomain.builder()
-                .name(concert.getName())
-                .date(concert.getDate())
-                .startTime(concert.getStartTime())
-                .endTime((concert.getEndTime()))
-                .locationAddress(concert.getLocation())
+                .name(concertSignUpDTO.getName())
+                .date(concertSignUpDTO.getDate())
+                .startTime(concertSignUpDTO.getStartTime())
+                .endTime((concertSignUpDTO.getEndTime()))
+                .locationAddress(concertSignUpDTO.getLocation())
+                .imageUrl(concertSignUpDTO.getImageUrl())
                 .build();
     }
 
-    private ConcertDTO toDTO(ConcertDomain concertDomain){
+    private ConcertSignUpDTO toSignUpDTO(ConcertDomain concertDomain){
 
-        return ConcertDTO.builder()
+        return ConcertSignUpDTO.builder()
                 .name(concertDomain.getName())
                 .date((concertDomain.getDate()))
                 .startTime((concertDomain.getStartTime()))

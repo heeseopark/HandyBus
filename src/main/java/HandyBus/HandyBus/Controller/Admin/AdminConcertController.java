@@ -1,6 +1,6 @@
 package HandyBus.HandyBus.Controller.Admin;
 
-import HandyBus.HandyBus.DTO.ConcertDTO;
+import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.DTO.IdolDTO;
 import HandyBus.HandyBus.Service.ConcertServiceImpl;
 import HandyBus.HandyBus.Service.ReservationServiceImpl;
@@ -25,8 +25,8 @@ public class AdminConcertController {
     }
 
     @GetMapping //need to change this code
-    public ResponseEntity<List<ConcertDTO>> getConcertAndReservationList() {
-        List<ConcertDTO> concertList = concertServiceImpl.getAll(); // This should call your service layer to get the list
+    public ResponseEntity<List<ConcertSignUpDTO>> getConcertAndReservationList() {
+        List<ConcertSignUpDTO> concertList = concertServiceImpl.findAll(); // This should call your service layer to get the list
         return new ResponseEntity<>(concertList, HttpStatus.OK);
     }
 
@@ -36,10 +36,10 @@ public class AdminConcertController {
     }
 
     @PostMapping("/concertsignup")
-    public ResponseEntity<?> createConcert(@RequestBody ConcertDTO concertDTO) {
+    public ResponseEntity<?> createConcert(@RequestBody ConcertSignUpDTO concertSignUpDTO) {
         // The service method 'createConcert' would handle saving the concert data
         // and possibly return the created concert object or any other confirmation details.
-        ConcertDTO createdConcert = concertServiceImpl.createConcert(concertDTO);
+        ConcertSignUpDTO createdConcert = concertServiceImpl.createConcert(concertSignUpDTO);
 
         // Return a ResponseEntity with appropriate status (CREATED) and body
         return ResponseEntity

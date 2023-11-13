@@ -7,12 +7,11 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class ConcertDTO {
+public class ConcertSignUpDTO {
 
     private String name;
     private LocalDate date;
@@ -20,5 +19,4 @@ public class ConcertDTO {
     private LocalTime endTime;
     private String location;
     private String imageUrl;
-    private List<ReservationDTO> reservations;
 }

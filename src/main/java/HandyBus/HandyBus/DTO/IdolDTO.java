@@ -13,5 +13,5 @@ public class IdolDTO {
 
     private String name;
     private List<String> members;
-    private List<ConcertDTO> concertList;
+    private List<ConcertSignUpDTO> concertList;
 }

@@ -1,6 +1,6 @@
 package HandyBus.HandyBus.Controller.Admin;
 
-import HandyBus.HandyBus.DTO.ConcertDTO;
+import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.DTO.ReservationSignUpRequestDTO;
 import HandyBus.HandyBus.DTO.ReservationSignUpResponseDTO;
 import HandyBus.HandyBus.Service.ConcertServiceImpl;
@@ -25,9 +25,9 @@ public class AdminReservationController {
         this.concertServiceImpl = concertServiceImpl;
     }
 
-    public ResponseEntity<List<ConcertDTO>> getConcerts(){
+    public ResponseEntity<List<ConcertSignUpDTO>> getConcerts(){
 
-        List<ConcertDTO> concertList = concertServiceImpl.findAll();
+        List<ConcertSignUpDTO> concertList = concertServiceImpl.findAll();
 
         return new ResponseEntity<>(concertList, HttpStatus.OK);
     }

@@ -42,11 +42,12 @@ public class ConcertDomain {
     private String imageUrl;
 
     @Builder
-    public ConcertDomain(String name, LocalDate date, LocalTime startTime, LocalTime endTime, String locationAddress){
+    public ConcertDomain(String name, LocalDate date, LocalTime startTime, LocalTime endTime, String locationAddress, String imageUrl){
         this.name = name;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.locationAddress = locationAddress;
+        this.imageUrl = imageUrl;
     }
 }

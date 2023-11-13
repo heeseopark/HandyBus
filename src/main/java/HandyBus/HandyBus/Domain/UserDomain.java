@@ -35,7 +35,7 @@ public class UserDomain {
     private Gender gender;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReservationDomain> reservationList; // Assuming Reservation is an entity that references UserDomain
+    private List<UserReservationDomain> userReservationList; // Assuming Reservation is an entity that references UserDomain
 
 
     @Builder

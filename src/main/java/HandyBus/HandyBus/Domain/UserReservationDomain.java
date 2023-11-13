@@ -2,6 +2,8 @@ package HandyBus.HandyBus.Domain;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class UserReservationDomain {
 
@@ -15,7 +17,7 @@ public class UserReservationDomain {
 
     @ManyToOne
     @JoinColumn(name = "reservation_id")
-    private ReservationDomain reservation;
+    private ReservationDomain reservaion;
 
     @Column(nullable = false)
     private Boolean hasPaid;
