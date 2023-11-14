@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,7 +17,7 @@ public class ConcertDomain {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idol_id")
     private IdolDomain idol;
 
@@ -32,12 +33,11 @@ public class ConcertDomain {
     @Column(nullable = false)
     private LocalTime endTime; // End time of the concert
 
-    @Embedded
     @Column(nullable = false)
     private String locationAddress;
 
-    @OneToMany(mappedBy = "concertID")
-    private List<ReservationDomain> reservationList; // One-to-many relationship with ReservationDomain
+    @OneToMany(mappedBy = "concertID", cascade = CascadeType.ALL)
+    private List<ReservationDomain> reservationList = new ArrayList<>(); // One-to-many relationship with ReservationDomain
 
     private String imageUrl;
 

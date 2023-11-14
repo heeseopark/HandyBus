@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,10 +17,10 @@ public class IdolDomain {
     private String name;
 
     @ElementCollection
-    private List<String> members; // Assuming members are stored as a list of strings
+    private List<String> members = new ArrayList<>(); // Assuming members are stored as a list of strings
 
-    @OneToMany(mappedBy = "idol")
-    private List<ConcertDomain> concertList;
+    @OneToMany(mappedBy = "idol", cascade = CascadeType.ALL)
+    private List<ConcertDomain> concertList = new ArrayList<>();
 
     @Builder
     public IdolDomain(String name, List<String> members, List<ConcertDomain> concertList){

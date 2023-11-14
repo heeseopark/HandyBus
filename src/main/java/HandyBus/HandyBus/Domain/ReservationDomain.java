@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,15 +16,15 @@ public class ReservationDomain {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Assuming there is an ID field
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_id")
     private ConcertDomain concertID; // Relation to ConcertDomain
 
     @OneToMany(mappedBy = "busID")
-    private List<BusDomain> busList; // One-to-many relationship with BusDomain
+    private List<BusDomain> busList = new ArrayList<>(); // One-to-many relationship with BusDomain
 
     @OneToMany(mappedBy = "reservation")
-    private List<UserReservationDomain> userReservationList;
+    private List<UserReservationDomain> userReservationList = new ArrayList<>();
 
     @Column(nullable = false)
     private LocalDateTime requiredArriveTime; // Using LocalDateTime for date-time fields

@@ -5,6 +5,7 @@ import HandyBus.HandyBus.Domain.Subclass.Gender;
 import lombok.*;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -39,8 +40,8 @@ public class UserDomain {
     @Column(nullable = false)
     private Gender gender;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserReservationDomain> userReservationList; // Assuming Reservation is an entity that references UserDomain
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserReservationDomain> userReservationList = new ArrayList<>(); // Assuming Reservation is an entity that references UserDomain
 
 
     @Builder

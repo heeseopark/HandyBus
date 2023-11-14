@@ -11,13 +11,13 @@ public class UserReservationDomain {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserDomain user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id")
-    private ReservationDomain reservaion;
+    private ReservationDomain reservation;
 
     @Column(nullable = false)
     private Boolean hasPaid;
