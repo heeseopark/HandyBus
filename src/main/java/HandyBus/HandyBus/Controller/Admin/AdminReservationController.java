@@ -1,5 +1,6 @@
 package HandyBus.HandyBus.Controller.Admin;
 
+import HandyBus.HandyBus.DTO.ConcertDTO;
 import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.DTO.ReservationSignUpRequestDTO;
 import HandyBus.HandyBus.DTO.ReservationSignUpResponseDTO;
@@ -26,19 +27,19 @@ public class AdminReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ConcertSignUpDTO>> getConcerts(){
+    public ResponseEntity<List<ConcertDTO>> getConcerts(){
 
-        List<ConcertSignUpDTO> concertList = concertServiceImpl.findUpcomingConcerts();
+        List<ConcertDTO> concertList = concertServiceImpl.findUpcomingConcerts();
 
         return new ResponseEntity<>(concertList, HttpStatus.OK);
     }
 
 
-//    @PostMapping
-//    public ResponseEntity<ReservationSignUpResponseDTO> createReservation(@RequestBody ReservationSignUpRequestDTO reservationSignUpRequestDTO){
-//
-//        ReservationSignUpResponseDTO newReservation = reservationServiceImpl.createReservation(reservationSignUpRequestDTO);
-//
-//        return new ResponseEntity<>(newReservation, HttpStatus.CREATED);
-//    }
+    @PostMapping
+    public ResponseEntity<?> createReservation(@RequestBody ReservationSignUpRequestDTO reservationSignUpRequestDTO){
+
+        reservationServiceImpl.createReservation(reservationSignUpRequestDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

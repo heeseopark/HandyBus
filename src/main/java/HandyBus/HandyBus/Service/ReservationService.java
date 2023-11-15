@@ -5,6 +5,6 @@ import HandyBus.HandyBus.DTO.ReservationSignUpResponseDTO;
 
 public interface ReservationService {
 
-//    ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO);
+    ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO reservationSignUpRequestDTO);
 
 }

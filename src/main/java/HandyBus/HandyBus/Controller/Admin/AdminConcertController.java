@@ -1,5 +1,6 @@
 package HandyBus.HandyBus.Controller.Admin;
 
+import HandyBus.HandyBus.DTO.ConcertDTO;
 import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.DTO.IdolDTO;
 import HandyBus.HandyBus.Service.ConcertServiceImpl;
@@ -26,8 +27,8 @@ public class AdminConcertController {
     }
 
     @GetMapping //need to change this code
-    public ResponseEntity<List<ConcertSignUpDTO>> getConcertAndReservationList() {
-        List<ConcertSignUpDTO> concertList = concertServiceImpl.findUpcomingConcerts(); // This should call your service layer to get the list
+    public ResponseEntity<List<ConcertDTO>> getConcertAndReservationList() {
+        List<ConcertDTO> concertList = concertServiceImpl.findUpcomingConcerts(); // This should call your service layer to get the list
         return new ResponseEntity<>(concertList, HttpStatus.OK);
     }
 
@@ -48,14 +49,14 @@ public class AdminConcertController {
 
         concertServiceImpl.createConcert(concertSignUpDTO);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
 
         // if the front gets the ok status, redirect to the concert signup page
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<ConcertSignUpDTO>> getAllConcerts() {
-        List<ConcertSignUpDTO> allConcerts = concertServiceImpl.findAllSorted();
+    public ResponseEntity<List<ConcertDTO>> getAllConcerts() {
+        List<ConcertDTO> allConcerts = concertServiceImpl.findAllSorted();
         return ResponseEntity.ok(allConcerts);
     }
 

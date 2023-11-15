@@ -1,8 +1,10 @@
 package HandyBus.HandyBus.Service;
 
+import HandyBus.HandyBus.DTO.ConcertDTO;
 import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.DTO.IdolDTO;
 import HandyBus.HandyBus.DTO.IdolSignUpDTO;
+import HandyBus.HandyBus.Domain.ConcertDomain;
 import HandyBus.HandyBus.Domain.IdolDomain;
 import HandyBus.HandyBus.Repository.IdolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +21,20 @@ public class IdolServiceImpl implements IdolService{
 
     private final IdolRepository idolRepository;
 
-    private final ConcertServiceImpl concertService;
+    private final ConcertServiceImpl concertServiceImpl;
 
     @Autowired
-    public IdolServiceImpl(IdolRepository idolRepository, ConcertServiceImpl concertService){
+    public IdolServiceImpl(IdolRepository idolRepository, ConcertServiceImpl concertServiceImpl){
         this.idolRepository = idolRepository;
-        this.concertService = concertService;
+        this.concertServiceImpl = concertServiceImpl;
     }
 
     @Override
-    public IdolSignUpDTO createIdol(IdolSignUpDTO idol) {
+    public IdolDTO createIdol(IdolSignUpDTO idolSignUpDTO) {
 
-        IdolDomain createdIdol = idolRepository.save(toDomain(idol));
+        IdolDomain createdIdol = idolRepository.save(toDomain(idolSignUpDTO));
 
-        return toSignUpDTO(createdIdol);
+        return toDTO(createdIdol);
     }
 
     @Override
@@ -51,15 +53,6 @@ public class IdolServiceImpl implements IdolService{
                 .collect(Collectors.toList());
     }
 
-    //    public IdolDomain toDomain(IdolDTO idolDTO){
-//
-//        return IdolDomain.builder()
-//                .name(idolDTO.getName())
-//                .members(idolDTO.getMembers())
-//                .concertList(idolDTO.getConcertList())
-//                .build();
-
-//    }
 
     private IdolDomain toDomain(IdolSignUpDTO idolSignUpDTO){
 
@@ -70,24 +63,31 @@ public class IdolServiceImpl implements IdolService{
     }
     // idol service가 concert service를 주입 받아야하는게 마음에 들지는 않음. (dividing concerns)
 
-    private IdolDTO toDTO(IdolDomain idolDomain) {
-        List<ConcertSignUpDTO> concertSignUpDTOList = idolDomain.getConcertList().stream()
-                .map(concertService::toSignUpDTO)
+    private IdolDomain toDomain(IdolDTO idolDTO){
+        List<ConcertDomain> concertDomainList = idolDTO.getConcertList().stream()
+                .map(concertServiceImpl::toDomain)
                 .collect(Collectors.toList());
 
-        return IdolDTO.builder()
-                .name(idolDomain.getName())
-                .members(idolDomain.getMembers())
-                .concertList(concertSignUpDTOList)
+        return IdolDomain.builder()
+                .idolId(idolDTO.getIdolId())
+                .name(idolDTO.getName())
+                .members(idolDTO.getMembers())
+                .concertList(concertDomainList)
                 .build();
     }
 
 
-    private IdolSignUpDTO toSignUpDTO(IdolDomain idolDomain){
 
-        return IdolSignUpDTO.builder()
+    private IdolDTO toDTO(IdolDomain idolDomain) {
+        List<ConcertDTO> concertDTOList = idolDomain.getConcertList().stream()
+                .map(concertServiceImpl::toDTO) // ConcertDomain 객체를 ConcertDTO 객체로 변환합니다.
+                .collect(Collectors.toList());
+
+        return IdolDTO.builder()
+                .idolId(idolDomain.getIdolId())
                 .name(idolDomain.getName())
                 .members(idolDomain.getMembers())
+                .concertList(concertDTOList)
                 .build();
     }
 }

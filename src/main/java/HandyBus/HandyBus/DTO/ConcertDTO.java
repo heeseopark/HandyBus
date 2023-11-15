@@ -11,8 +11,9 @@ import java.time.LocalTime;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ConcertSignUpDTO {
+public class ConcertDTO {
 
+    private Long concertId;
     private String name;
     private LocalDate date;
     private LocalTime startTime;

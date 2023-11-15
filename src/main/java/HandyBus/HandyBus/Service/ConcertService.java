@@ -1,13 +1,14 @@
 package HandyBus.HandyBus.Service;
 
+import HandyBus.HandyBus.DTO.ConcertDTO;
 import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 
 import java.util.List;
 
 public interface ConcertService {
 
-    ConcertSignUpDTO createConcert(ConcertSignUpDTO concert);
+    ConcertDTO createConcert(ConcertSignUpDTO concert);
 
-    List<ConcertSignUpDTO> findAll();
+    List<ConcertDTO> findAll();
 
 }

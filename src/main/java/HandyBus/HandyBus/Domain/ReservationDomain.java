@@ -2,6 +2,7 @@ package HandyBus.HandyBus.Domain;
 
 import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +21,7 @@ public class ReservationDomain {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_id")
-    private ConcertDomain concertID; // Relation to ConcertDomain
+    private ConcertDomain concert; // Relation to ConcertDomain
 
     @OneToMany(mappedBy = "busId")
     private List<BusDomain> busList = new ArrayList<>(); // One-to-many relationship with BusDomain
@@ -43,10 +44,24 @@ public class ReservationDomain {
     @Column(length = 500)
     private String chatRoomUrl; // URL field for chat room
 
-    // Getters and setters for all fields
+    private String imageUrl;
 
-    // ProceedStatus enum definition (assuming it's an inner enum, otherwise it could be in its own file)
+    @Builder
+    public ReservationDomain(ConcertDomain concert, List<BusDomain> busList,
+                             List<UserReservationDomain> userReservationList,
+                             LocalDateTime requiredArriveTime, ProceedStatus proceedStatus,
+                             int price, String qrImage, String chatRoomUrl, String imageUrl) {
+        this.concert = concert;
+        this.busList = busList;
+        this.userReservationList = userReservationList;
+        this.requiredArriveTime = requiredArriveTime;
+        this.proceedStatus = proceedStatus;
+        this.price = price;
+        this.qrImage = qrImage;
+        this.chatRoomUrl = chatRoomUrl;
+        this.imageUrl = imageUrl;
+    }
 
 
-    // Constructor, getters, and setters...
+
 }

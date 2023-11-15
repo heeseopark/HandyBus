@@ -1,5 +1,6 @@
 package HandyBus.HandyBus.Service;
 
+import HandyBus.HandyBus.DTO.ConcertDTO;
 import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.Domain.ConcertDomain;
 import HandyBus.HandyBus.Repository.ConcertRepository;
@@ -25,48 +26,59 @@ public class ConcertServiceImpl implements ConcertService{
     }
 
     @Override
-    public ConcertSignUpDTO createConcert(ConcertSignUpDTO concert){
+    public ConcertDTO createConcert(ConcertSignUpDTO concert){
 
         ConcertDomain createdConcert = concertRepository.save(toDomain(concert));
 
-        return ConcertSignUpDTO.builder()
-                .id(createdConcert.getConcertId())
+        return ConcertDTO.builder()
+                .concertId(createdConcert.getConcertId())
                 .name(createdConcert.getName())
                 .date(createdConcert.getDate())
                 .startTime(createdConcert.getStartTime())
                 .endTime((createdConcert.getEndTime()))
                 .location(createdConcert.getLocationAddress())
+                .imageUrl(createdConcert.getImageUrl())
                 .build();
     }
 
     @Override
-    public List<ConcertSignUpDTO> findAll() {
+    public List<ConcertDTO> findAll() {
         return concertRepository.findAll().stream()
-                .map(this::toSignUpDTO)
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<ConcertSignUpDTO> findUpcomingConcerts() {
+    public List<ConcertDTO> findUpcomingConcerts() {
         LocalDate today = LocalDate.now(); // Get the current date
 
         return concertRepository.findAll().stream()
                 .filter(concert -> concert.getDate().isAfter(today)) // Filter concerts with a date after today
-                .map(this::toSignUpDTO) // Convert to ConcertSignUpDTO
+                .map(this::toDTO) // Convert to ConcertSignUpDTO
                 .collect(Collectors.toList());
     }
 
-    public List<ConcertSignUpDTO> findAllSorted() {
+    public List<ConcertDTO> findAllSorted() {
         return concertRepository.findAll().stream()
                 .sorted(Comparator.comparing(ConcertDomain::getDate)
                         .thenComparing(ConcertDomain::getName))
-                .map(this::toSignUpDTO)
+                .map(this::toDTO)
                 .collect(Collectors.toList());
 
     }
 
+    protected ConcertDomain toDomain(ConcertDTO concertDTO){
 
+        return ConcertDomain.builder()
+                .name(concertDTO.getName())
+                .date(concertDTO.getDate())
+                .startTime(concertDTO.getStartTime())
+                .endTime((concertDTO.getEndTime()))
+                .locationAddress(concertDTO.getLocation())
+                .imageUrl(concertDTO.getImageUrl())
+                .build();
+    }
 
-    private ConcertDomain toDomain(ConcertSignUpDTO concertSignUpDTO){
+    protected ConcertDomain toDomain(ConcertSignUpDTO concertSignUpDTO){
 
         return ConcertDomain.builder()
                 .name(concertSignUpDTO.getName())
@@ -78,10 +90,10 @@ public class ConcertServiceImpl implements ConcertService{
                 .build();
     }
 
-    public ConcertSignUpDTO toSignUpDTO(ConcertDomain concertDomain){
+    protected ConcertDTO toDTO(ConcertDomain concertDomain){
 
-        return ConcertSignUpDTO.builder()
-                .id(concertDomain.getConcertId())
+        return ConcertDTO.builder()
+                .concertId(concertDomain.getConcertId())
                 .name(concertDomain.getName())
                 .date((concertDomain.getDate()))
                 .startTime((concertDomain.getStartTime()))
@@ -91,6 +103,6 @@ public class ConcertServiceImpl implements ConcertService{
     }
 
     public void deleteConcert(Long id) {
-        concertRepository.deleteById(id); // Assuming deleteById method is available in your repository
+        concertRepository.deleteById(id);
     }
 }

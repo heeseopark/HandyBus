@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -22,18 +23,28 @@ public class ReservationServiceImpl {
         this.reservationRepository = reservationRepository;
     }
 
-//    @Override
-//    public ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO reservationSignUpRequestDTO){
-//
-//        return null;
-//    }
+    @Override
+    public ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO reservationSignUpRequestDTO){
+
+        ReservationDomain createdReservation = reservationRepository.save(toDomain(reservationSignUpRequestDTO));
+
+        // Build and return the response DTO
+        return ReservationSignUpResponseDTO.builder()
+                .concertId(createdReservation.getConcert().getConcertId()) // Assuming you want to return the concertId
+                .requiredArriveTime(LocalTime.from(createdReservation.getRequiredArriveTime()))
+                .qrImage(createdReservation.getQrImage())
+                .chatRoomUrl(createdReservation.getChatRoomUrl())
+                .imageUrl(createdReservation.getImageUrl())
+                .build();
+    }
+
 
     public List<ReservationDTO> getAll(){
 
         return null;
     }
 
-//    private ReservationDTO toDTO(ReservationDomain reservationDomain) {
+//    private ReservationSignUpResponseDTO toResponseDTO(ReservationDomain reservationDomain) {
 //        // Implement this method based on your fields in ReservationDomain and ReservationDTO
 //        return ReservationDTO.builder()
 //                .countRegistered(reservationDomain.getCountRegistered())
@@ -41,4 +52,12 @@ public class ReservationServiceImpl {
 //                .proceedStatus(reservationDomain.getProceedStatus())
 //                .build();
 //    }
+
+    private ReservationDomain toDomain(ReservationSignUpRequestDTO reservationSignUpRequestDTO){
+
+        return ReservationDomain.builder()
+                .concert(toDomain(reservationSignUpRequestDTO.getConcertDTO()))
+                .name()
+
+    }
 }

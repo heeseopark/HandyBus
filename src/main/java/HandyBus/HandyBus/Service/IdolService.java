@@ -6,7 +6,7 @@ import HandyBus.HandyBus.DTO.IdolSignUpDTO;
 import java.util.List;
 
 public interface IdolService {
-    IdolSignUpDTO createIdol(IdolSignUpDTO idolSignUpDTO);
+    IdolDTO createIdol(IdolSignUpDTO idolSignUpDTO);
     List<IdolDTO> findAll();
     // IdolDTO updateIdol(IdolDTO idolDto);
     // void deleteIdol(Long id);

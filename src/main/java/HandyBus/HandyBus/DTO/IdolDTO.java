@@ -11,7 +11,8 @@ import java.util.List;
 @Getter
 public class IdolDTO {
 
+    private Long idolId;
     private String name;
     private List<String> members;
-    private List<ConcertSignUpDTO> concertList;
+    private List<ConcertDTO> concertList;
 }

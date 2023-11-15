@@ -1,15 +1,31 @@
 package HandyBus.HandyBus.DTO;
 
+import HandyBus.HandyBus.Domain.Subclass.Region;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
+import java.time.LocalTime;
 
+@Getter
+@Builder
+@AllArgsConstructor
 public class ReservationSignUpRequestDTO {
 
-    private String idolName;
 
-    private String concertName;
+    private ConcertDTO concertDTO;
 
     private String name;
+
+    private Region region;
+
+    private LocalTime requiredArriveTime;
+
+    private String reservationImage;
+
+    private String qrImage;
+
+    private String chatRoomUrl;
 
 
 }
