@@ -30,7 +30,7 @@ public class ConcertServiceImpl implements ConcertService{
         ConcertDomain createdConcert = concertRepository.save(toDomain(concert));
 
         return ConcertSignUpDTO.builder()
-                .id(createdConcert.getId())
+                .id(createdConcert.getConcertId())
                 .name(createdConcert.getName())
                 .date(createdConcert.getDate())
                 .startTime(createdConcert.getStartTime())
@@ -81,7 +81,7 @@ public class ConcertServiceImpl implements ConcertService{
     public ConcertSignUpDTO toSignUpDTO(ConcertDomain concertDomain){
 
         return ConcertSignUpDTO.builder()
-                .id(concertDomain.getId())
+                .id(concertDomain.getConcertId())
                 .name(concertDomain.getName())
                 .date((concertDomain.getDate()))
                 .startTime((concertDomain.getStartTime()))

@@ -3,6 +3,7 @@ package HandyBus.HandyBus.Domain;
 import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,17 +11,18 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class ReservationDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Assuming there is an ID field
+    private Long reservationId; // Assuming there is an ID field
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_id")
     private ConcertDomain concertID; // Relation to ConcertDomain
 
-    @OneToMany(mappedBy = "busID")
+    @OneToMany(mappedBy = "busId")
     private List<BusDomain> busList = new ArrayList<>(); // One-to-many relationship with BusDomain
 
     @OneToMany(mappedBy = "reservation")

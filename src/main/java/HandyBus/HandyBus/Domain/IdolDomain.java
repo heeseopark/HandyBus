@@ -3,21 +3,24 @@ package HandyBus.HandyBus.Domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class IdolDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idolId;
+
     private String name;
 
     @ElementCollection
-    private List<String> members = new ArrayList<>(); // Assuming members are stored as a list of strings
+    private List<String> members = new ArrayList<>();
 
     @OneToMany(mappedBy = "idol", cascade = CascadeType.ALL)
     private List<ConcertDomain> concertList = new ArrayList<>();

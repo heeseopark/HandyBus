@@ -16,14 +16,12 @@ import java.util.Optional;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private final PasswordEncoder passwordEncoder;
-
     private final UserRepository userRepository;
 
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -53,7 +51,7 @@ public class UserServiceImpl implements UserService {
         return UserDomain.builder()
                 .email(userSignUpRequestDTO.getEmail())
                 .name(userSignUpRequestDTO.getName())
-                .passwordHash(passwordEncoder.encode(userSignUpRequestDTO.getPassword()))
+                .passwordHash(userSignUpRequestDTO.getPassword())
                 .phoneNumber(Integer.parseInt(userSignUpRequestDTO.getPhoneNumber()))
                 .postCode(userSignUpRequestDTO.getPostCode())
                 .gender(userSignUpRequestDTO.getGender())

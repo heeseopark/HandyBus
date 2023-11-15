@@ -3,6 +3,7 @@ package HandyBus.HandyBus.Domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,11 +12,12 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class ConcertDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long concertId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idol_id")

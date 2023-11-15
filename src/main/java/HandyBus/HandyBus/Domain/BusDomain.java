@@ -2,16 +2,18 @@ package HandyBus.HandyBus.Domain;
 
 import HandyBus.HandyBus.Domain.Subclass.Route;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 public class BusDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long busID; // Primary key for the bus entity
+    private Long busId; // Primary key for the bus entity
 
-    @Embedded
-    private Route route; // Embedding Route class
+//    @Embedded
+//    private Route route; // Embedding Route class
 
     @Column(nullable = false, length = 20)
     private String licensePlate; // License plate string field
