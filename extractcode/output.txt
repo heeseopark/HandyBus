@@ -177,7 +177,6 @@ public class UserController {
 
 package HandyBus.HandyBus.Domain;
 
-import HandyBus.HandyBus.Domain.Subclass.Route;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
@@ -409,7 +408,7 @@ public class UserDomain {
         this.gender = gender;
     }
 
-    // ÀÌ°Å service³ª repository ÂÊÀ¸·Î »©°í ½ÍÀ½.
+    // ï¿½Ì°ï¿½ serviceï¿½ï¿½ repository ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
     public Region returnRegion(String postcode) {
         int code = Integer.parseInt(postcode);
 
@@ -519,27 +518,27 @@ public enum Region {
 
     ULSAN,
 
-    Ã¢¿ø,
+    Ã¢ï¿½ï¿½,
 
-    Ã»ÁÖ,
+    Ã»ï¿½ï¿½,
 
-    Ãµ¾È,
+    Ãµï¿½ï¿½,
 
-    ÀüÁÖ,
+    ï¿½ï¿½ï¿½ï¿½,
 
-    ±èÇØ,
+    ï¿½ï¿½ï¿½ï¿½,
 
-    Æ÷Ç×,
+    ï¿½ï¿½ï¿½ï¿½,
 
-    ¿øÁÖ,
+    ï¿½ï¿½ï¿½ï¿½,
 
-    °­¸ª,
+    ï¿½ï¿½ï¿½ï¿½,
 
-    ¿©¼ö,
+    ï¿½ï¿½ï¿½ï¿½,
 
-    ¼øÃµ,
+    ï¿½ï¿½Ãµ,
 
-    ¸ñÆ÷;
+    ï¿½ï¿½ï¿½ï¿½;
 
 
 }
@@ -964,7 +963,7 @@ public class IdolServiceImpl implements IdolService{
                 .members(idolSignUpDTO.getMembers())
                 .build();
     }
-    // idol service°¡ concert service¸¦ ÁÖÀÔ ¹Þ¾Æ¾ßÇÏ´Â°Ô ¸¶À½¿¡ µéÁö´Â ¾ÊÀ½. (dividing concerns)
+    // idol serviceï¿½ï¿½ concert serviceï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¾ï¿½ï¿½Ï´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. (dividing concerns)
 
     private IdolDTO toDTO(IdolDomain idolDomain) {
         List<ConcertSignUpDTO> concertSignUpDTOList = idolDomain.getConcertList().stream()

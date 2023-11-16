@@ -54,40 +54,4 @@ public class IdolServiceImpl implements IdolService{
     }
 
 
-    private IdolDomain toDomain(IdolSignUpDTO idolSignUpDTO){
-
-        return IdolDomain.builder()
-                .name(idolSignUpDTO.getName())
-                .members(idolSignUpDTO.getMembers())
-                .build();
-    }
-    // idol service가 concert service를 주입 받아야하는게 마음에 들지는 않음. (dividing concerns)
-
-    private IdolDomain toDomain(IdolDTO idolDTO){
-        List<ConcertDomain> concertDomainList = idolDTO.getConcertList().stream()
-                .map(concertServiceImpl::toDomain)
-                .collect(Collectors.toList());
-
-        return IdolDomain.builder()
-                .idolId(idolDTO.getIdolId())
-                .name(idolDTO.getName())
-                .members(idolDTO.getMembers())
-                .concertList(concertDomainList)
-                .build();
-    }
-
-
-
-    private IdolDTO toDTO(IdolDomain idolDomain) {
-        List<ConcertDTO> concertDTOList = idolDomain.getConcertList().stream()
-                .map(concertServiceImpl::toDTO) // ConcertDomain 객체를 ConcertDTO 객체로 변환합니다.
-                .collect(Collectors.toList());
-
-        return IdolDTO.builder()
-                .idolId(idolDomain.getIdolId())
-                .name(idolDomain.getName())
-                .members(idolDomain.getMembers())
-                .concertList(concertDTOList)
-                .build();
-    }
 }

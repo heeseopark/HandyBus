@@ -46,17 +46,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    @Override
-    public UserDomain toDomain(UserSignUpRequestDTO userSignUpRequestDTO) {
-        return UserDomain.builder()
-                .email(userSignUpRequestDTO.getEmail())
-                .name(userSignUpRequestDTO.getName())
-                .passwordHash(userSignUpRequestDTO.getPassword())
-                .phoneNumber(Integer.parseInt(userSignUpRequestDTO.getPhoneNumber()))
-                .postCode(userSignUpRequestDTO.getPostCode())
-                .gender(userSignUpRequestDTO.getGender())
-                .build();
-    }
+
 
 
 }

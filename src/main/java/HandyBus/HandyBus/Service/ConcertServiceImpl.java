@@ -66,42 +66,6 @@ public class ConcertServiceImpl implements ConcertService{
 
     }
 
-    protected ConcertDomain toDomain(ConcertDTO concertDTO){
-
-        return ConcertDomain.builder()
-                .name(concertDTO.getName())
-                .date(concertDTO.getDate())
-                .startTime(concertDTO.getStartTime())
-                .endTime((concertDTO.getEndTime()))
-                .locationAddress(concertDTO.getLocation())
-                .imageUrl(concertDTO.getImageUrl())
-                .build();
-    }
-
-    protected ConcertDomain toDomain(ConcertSignUpDTO concertSignUpDTO){
-
-        return ConcertDomain.builder()
-                .name(concertSignUpDTO.getName())
-                .date(concertSignUpDTO.getDate())
-                .startTime(concertSignUpDTO.getStartTime())
-                .endTime((concertSignUpDTO.getEndTime()))
-                .locationAddress(concertSignUpDTO.getLocation())
-                .imageUrl(concertSignUpDTO.getImageUrl())
-                .build();
-    }
-
-    protected ConcertDTO toDTO(ConcertDomain concertDomain){
-
-        return ConcertDTO.builder()
-                .concertId(concertDomain.getConcertId())
-                .name(concertDomain.getName())
-                .date((concertDomain.getDate()))
-                .startTime((concertDomain.getStartTime()))
-                .endTime((concertDomain.getEndTime()))
-                .location((concertDomain.getLocationAddress()))
-                .build();
-    }
-
     public void deleteConcert(Long id) {
         concertRepository.deleteById(id);
     }

@@ -53,11 +53,5 @@ public class ReservationServiceImpl {
 //                .build();
 //    }
 
-    private ReservationDomain toDomain(ReservationSignUpRequestDTO reservationSignUpRequestDTO){
 
-        return ReservationDomain.builder()
-                .concert(toDomain(reservationSignUpRequestDTO.getConcertDTO()))
-                .name()
-
-    }
 }

@@ -23,9 +23,6 @@ public class ReservationDomain {
     @JoinColumn(name = "concert_id")
     private ConcertDomain concert; // Relation to ConcertDomain
 
-    @OneToMany(mappedBy = "busId")
-    private List<BusDomain> busList = new ArrayList<>(); // One-to-many relationship with BusDomain
-
     @OneToMany(mappedBy = "reservation")
     private List<UserReservationDomain> userReservationList = new ArrayList<>();
 
@@ -47,12 +44,11 @@ public class ReservationDomain {
     private String imageUrl;
 
     @Builder
-    public ReservationDomain(ConcertDomain concert, List<BusDomain> busList,
+    public ReservationDomain(ConcertDomain concert,
                              List<UserReservationDomain> userReservationList,
                              LocalDateTime requiredArriveTime, ProceedStatus proceedStatus,
                              int price, String qrImage, String chatRoomUrl, String imageUrl) {
         this.concert = concert;
-        this.busList = busList;
         this.userReservationList = userReservationList;
         this.requiredArriveTime = requiredArriveTime;
         this.proceedStatus = proceedStatus;

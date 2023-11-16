@@ -16,6 +16,5 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    UserDomain toDomain(UserSignUpRequestDTO userSignUpRequestDTO);
 
 }
