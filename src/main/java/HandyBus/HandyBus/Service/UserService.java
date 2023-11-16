@@ -1,14 +1,13 @@
 package HandyBus.HandyBus.Service;
 
-import HandyBus.HandyBus.DTO.UserSignUpRequestDTO;
-import HandyBus.HandyBus.DTO.UserSignUpResponseDTO;
+import HandyBus.HandyBus.DTO.UserDTO;
 import HandyBus.HandyBus.Domain.UserDomain;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    UserSignUpResponseDTO createUser(UserSignUpRequestDTO user);
+    UserDTO createUser(UserDTO.SignUpRequest user);
 
     Optional<UserDomain> getUserById(Long id);
 

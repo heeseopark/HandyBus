@@ -1,7 +1,6 @@
 package HandyBus.HandyBus.Controller.Admin;
 
 import HandyBus.HandyBus.DTO.ConcertDTO;
-import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.DTO.IdolDTO;
 import HandyBus.HandyBus.Service.ConcertServiceImpl;
 import HandyBus.HandyBus.Service.IdolServiceImpl;
@@ -45,9 +44,9 @@ public class AdminConcertController {
     }
 
     @PostMapping("/concertsignup")
-    public ResponseEntity<Void> createConcert(@RequestBody ConcertSignUpDTO concertSignUpDTO) {
+    public ResponseEntity<Void> createConcert(@RequestBody ConcertDTO.SignUp concert) {
 
-        concertServiceImpl.createConcert(concertSignUpDTO);
+        concertServiceImpl.createConcert(concert);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
 

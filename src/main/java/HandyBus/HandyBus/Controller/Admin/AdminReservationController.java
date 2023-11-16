@@ -1,9 +1,7 @@
 package HandyBus.HandyBus.Controller.Admin;
 
 import HandyBus.HandyBus.DTO.ConcertDTO;
-import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
-import HandyBus.HandyBus.DTO.ReservationSignUpRequestDTO;
-import HandyBus.HandyBus.DTO.ReservationSignUpResponseDTO;
+import HandyBus.HandyBus.DTO.ReservationDTO;
 import HandyBus.HandyBus.Service.ConcertServiceImpl;
 import HandyBus.HandyBus.Service.ReservationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +34,9 @@ public class AdminReservationController {
 
 
     @PostMapping
-    public ResponseEntity<?> createReservation(@RequestBody ReservationSignUpRequestDTO reservationSignUpRequestDTO){
+    public ResponseEntity<?> createReservation(@RequestBody ReservationDTO.SignUp reservation){
 
-        reservationServiceImpl.createReservation(reservationSignUpRequestDTO);
+        reservationServiceImpl.createReservation(reservation);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

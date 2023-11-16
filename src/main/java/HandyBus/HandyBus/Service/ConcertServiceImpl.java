@@ -1,10 +1,10 @@
 package HandyBus.HandyBus.Service;
 
 import HandyBus.HandyBus.DTO.ConcertDTO;
-import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.Domain.ConcertDomain;
 import HandyBus.HandyBus.Repository.ConcertRepository;
 
+import org.aspectj.weaver.patterns.ConcreteCflowPointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,25 +26,17 @@ public class ConcertServiceImpl implements ConcertService{
     }
 
     @Override
-    public ConcertDTO createConcert(ConcertSignUpDTO concert){
+    public ConcertDTO createConcert(ConcertDTO.SignUp concert){
 
-        ConcertDomain createdConcert = concertRepository.save(toDomain(concert));
+        ConcertDomain createdConcert = concertRepository.save(concert.toEntity());
 
-        return ConcertDTO.builder()
-                .concertId(createdConcert.getConcertId())
-                .name(createdConcert.getName())
-                .date(createdConcert.getDate())
-                .startTime(createdConcert.getStartTime())
-                .endTime((createdConcert.getEndTime()))
-                .location(createdConcert.getLocationAddress())
-                .imageUrl(createdConcert.getImageUrl())
-                .build();
+        return ConcertDTO.toDTO(createdConcert);
     }
 
     @Override
     public List<ConcertDTO> findAll() {
         return concertRepository.findAll().stream()
-                .map(this::toDTO)
+                .map(ConcertDTO::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -53,7 +45,7 @@ public class ConcertServiceImpl implements ConcertService{
 
         return concertRepository.findAll().stream()
                 .filter(concert -> concert.getDate().isAfter(today)) // Filter concerts with a date after today
-                .map(this::toDTO) // Convert to ConcertSignUpDTO
+                .map(ConcertDTO::toDTO) // Convert to ConcertSignUpDTO
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +53,7 @@ public class ConcertServiceImpl implements ConcertService{
         return concertRepository.findAll().stream()
                 .sorted(Comparator.comparing(ConcertDomain::getDate)
                         .thenComparing(ConcertDomain::getName))
-                .map(this::toDTO)
+                .map(ConcertDTO::toDTO)
                 .collect(Collectors.toList());
 
     }

@@ -2,12 +2,14 @@ package HandyBus.HandyBus.Domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.catalina.User;
 
 import java.util.List;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class UserReservationDomain {
 

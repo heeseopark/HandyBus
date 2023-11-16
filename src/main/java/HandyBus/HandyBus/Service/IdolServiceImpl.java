@@ -1,10 +1,6 @@
 package HandyBus.HandyBus.Service;
 
-import HandyBus.HandyBus.DTO.ConcertDTO;
-import HandyBus.HandyBus.DTO.ConcertSignUpDTO;
 import HandyBus.HandyBus.DTO.IdolDTO;
-import HandyBus.HandyBus.DTO.IdolSignUpDTO;
-import HandyBus.HandyBus.Domain.ConcertDomain;
 import HandyBus.HandyBus.Domain.IdolDomain;
 import HandyBus.HandyBus.Repository.IdolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,37 +17,34 @@ public class IdolServiceImpl implements IdolService{
 
     private final IdolRepository idolRepository;
 
-    private final ConcertServiceImpl concertServiceImpl;
-
     @Autowired
-    public IdolServiceImpl(IdolRepository idolRepository, ConcertServiceImpl concertServiceImpl){
+    public IdolServiceImpl(IdolRepository idolRepository){
         this.idolRepository = idolRepository;
-        this.concertServiceImpl = concertServiceImpl;
     }
 
     @Override
-    public IdolDTO createIdol(IdolSignUpDTO idolSignUpDTO) {
+    public IdolDTO createIdol(IdolDTO.SignUp idol) {
 
-        IdolDomain createdIdol = idolRepository.save(toDomain(idolSignUpDTO));
+        IdolDomain createdIdol = idolRepository.save(idol.toEntity());
 
-        return toDTO(createdIdol);
+        return IdolDTO.toDTO(createdIdol);
     }
 
     @Override
     public List<IdolDTO> findAll() {
 
         return idolRepository.findAll().stream()
-                .map(this::toDTO)
+                .map(IdolDTO::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<IdolDTO> findAllSorted() {
         return idolRepository.findAll().stream()
-                .map(this::toDTO) // Convert each IdolDomain to IdolDTO
-                .sorted(Comparator.comparingInt((IdolDTO idol) -> idol.getConcertList().size())
-                        .thenComparing(IdolDTO::getName))
+                .map(IdolDTO::toDTO)
+                .sorted(Comparator.comparing(IdolDTO::getName))
                 .collect(Collectors.toList());
     }
+
 
 
 }

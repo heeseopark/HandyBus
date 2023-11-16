@@ -38,7 +38,7 @@ public class ConcertDomain {
     @Column(nullable = false)
     private String locationAddress;
 
-    @OneToMany(mappedBy = "concertDomain", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL)
     private List<ReservationDomain> reservationList = new ArrayList<>(); // One-to-many relationship with ReservationDomain
 
     private String imageUrl;

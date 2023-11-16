@@ -45,7 +45,7 @@ public class UserDomain {
 
 
     @Builder
-    public UserDomain(String name, String email, String passwordHash, int phoneNumber, String postCode, Region region, Gender gender){
+    public UserDomain(String name, String email, String passwordHash, int phoneNumber, String postCode, Region region, Gender gender, List<UserReservationDomain> userReservationList){
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -53,6 +53,7 @@ public class UserDomain {
         this.postCode = postCode;
         this.region = region;
         this.gender = gender;
+        this.userReservationList = userReservationList;
     }
 
     // 이거 service나 repository 쪽으로 빼고 싶음.

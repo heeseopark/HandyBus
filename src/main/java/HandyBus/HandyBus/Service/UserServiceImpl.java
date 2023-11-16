@@ -1,11 +1,9 @@
 package HandyBus.HandyBus.Service;
 
-import HandyBus.HandyBus.DTO.UserSignUpRequestDTO;
-import HandyBus.HandyBus.DTO.UserSignUpResponseDTO;
+import HandyBus.HandyBus.DTO.UserDTO;
 import HandyBus.HandyBus.Domain.UserDomain;
 import HandyBus.HandyBus.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +23,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserSignUpResponseDTO createUser(UserSignUpRequestDTO user) {
-        userRepository.save(toDomain(user));
-        return UserSignUpResponseDTO.builder()
-                .name(user.getName()).build();
+    public UserDTO createUser(UserDTO.SignUpRequest user) {
+
+        UserDomain createdUser = userRepository.save(user.toEntity());
+
+        return UserDTO.toDTO(createdUser);
     }
 
     @Override

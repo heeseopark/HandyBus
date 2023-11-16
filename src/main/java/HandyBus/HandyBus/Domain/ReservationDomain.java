@@ -1,6 +1,7 @@
 package HandyBus.HandyBus.Domain;
 
 import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
+import HandyBus.HandyBus.Domain.Subclass.Region;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class ReservationDomain {
     @JoinColumn(name = "concert_id")
     private ConcertDomain concert; // Relation to ConcertDomain
 
+    private Region region;
+
     @OneToMany(mappedBy = "reservation")
     private List<UserReservationDomain> userReservationList = new ArrayList<>();
 
@@ -44,11 +47,12 @@ public class ReservationDomain {
     private String imageUrl;
 
     @Builder
-    public ReservationDomain(ConcertDomain concert,
+    public ReservationDomain(ConcertDomain concert, Region region,
                              List<UserReservationDomain> userReservationList,
                              LocalDateTime requiredArriveTime, ProceedStatus proceedStatus,
                              int price, String qrImage, String chatRoomUrl, String imageUrl) {
         this.concert = concert;
+        this.region = region;
         this.userReservationList = userReservationList;
         this.requiredArriveTime = requiredArriveTime;
         this.proceedStatus = proceedStatus;

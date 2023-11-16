@@ -1,11 +1,16 @@
-package HandyBus.HandyBus.NewDTO;
+package HandyBus.HandyBus.DTO;
 
+import HandyBus.HandyBus.Domain.Subclass.Region;
 import HandyBus.HandyBus.Domain.UserDomain;
 import HandyBus.HandyBus.Domain.Subclass.Gender;
+import HandyBus.HandyBus.Domain.UserReservationDomain;
 import lombok.Getter;
 import lombok.Builder;
 
-@Getter
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Builder
 public class UserDTO {
 
     private Long userId;
@@ -13,22 +18,36 @@ public class UserDTO {
     private String email;
     private int phoneNumber;
     private String postCode;
+    private Region region;
     private Gender gender;
+    private List<UserReservationDTO> userReservationList;
 
-    // UserDomain에서 UserDTO로 변환
     public static UserDTO toDTO(UserDomain user) {
         return UserDTO.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
+                .region(user.getRegion())
+                .phoneNumber(user.getPhoneNumber())
                 .postCode(user.getPostCode())
                 .gender(user.getGender())
+                .userReservationList(user.getUserReservationList().stream().map(UserReservationDTO::toDTO).collect(Collectors.toList()))
                 .build();
     }
 
-    // 사용자 가입을 위한 Request DTO
-    @Getter
+    public UserDomain toEntity(){
+        return UserDomain.builder()
+                .name(this.name)
+                .email(this.email)
+                .phoneNumber(this.phoneNumber)
+                .postCode(this.postCode)
+                .region(this.region)
+                .gender(this.gender)
+                .userReservationList(this.userReservationList.stream().map(UserReservationDTO::toEntity).collect(Collectors.toList()))
+                .build();
+    }
+
     @Builder
     public static class SignUpRequest {
         private String email;
@@ -38,7 +57,6 @@ public class UserDTO {
         private String postCode;
         private Gender gender;
 
-        // DTO에서 UserDomain으로의 변환
         public UserDomain toEntity() {
             return UserDomain.builder()
                     .name(this.name)
@@ -51,12 +69,10 @@ public class UserDTO {
         }
     }
 
-    // 사용자 가입을 위한 Response DTO
-    @Getter
     @Builder
     public static class SignUpResponse {
         private String name;
 
-        // 생성자, getter 등...
+
     }
 }

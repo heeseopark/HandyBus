@@ -1,8 +1,6 @@
 package HandyBus.HandyBus.Service;
 
 import HandyBus.HandyBus.DTO.ReservationDTO;
-import HandyBus.HandyBus.DTO.ReservationSignUpRequestDTO;
-import HandyBus.HandyBus.DTO.ReservationSignUpResponseDTO;
 import HandyBus.HandyBus.Domain.ReservationDomain;
 import HandyBus.HandyBus.Repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ReservationServiceImpl {
+public class ReservationServiceImpl implements ReservationService{
 
     private final ReservationRepository reservationRepository;
 
@@ -24,34 +22,18 @@ public class ReservationServiceImpl {
     }
 
     @Override
-    public ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO reservationSignUpRequestDTO){
+    public ReservationDTO createReservation(ReservationDTO.SignUp reservation){
 
-        ReservationDomain createdReservation = reservationRepository.save(toDomain(reservationSignUpRequestDTO));
+        ReservationDomain createdReservation = reservationRepository.save(reservation.toEntity());
 
-        // Build and return the response DTO
-        return ReservationSignUpResponseDTO.builder()
-                .concertId(createdReservation.getConcert().getConcertId()) // Assuming you want to return the concertId
-                .requiredArriveTime(LocalTime.from(createdReservation.getRequiredArriveTime()))
-                .qrImage(createdReservation.getQrImage())
-                .chatRoomUrl(createdReservation.getChatRoomUrl())
-                .imageUrl(createdReservation.getImageUrl())
-                .build();
+        return ReservationDTO.toDTO(createdReservation);
     }
 
 
-    public List<ReservationDTO> getAll(){
+    public List<ReservationDTO> finAll(){
 
         return null;
     }
-
-//    private ReservationSignUpResponseDTO toResponseDTO(ReservationDomain reservationDomain) {
-//        // Implement this method based on your fields in ReservationDomain and ReservationDTO
-//        return ReservationDTO.builder()
-//                .countRegistered(reservationDomain.getCountRegistered())
-//                .countPaid(reservationDomain.getCountPaid())
-//                .proceedStatus(reservationDomain.getProceedStatus())
-//                .build();
-//    }
 
 
 }

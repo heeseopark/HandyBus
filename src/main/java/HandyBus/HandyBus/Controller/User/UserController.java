@@ -1,7 +1,6 @@
 package HandyBus.HandyBus.Controller.User;
 
-import HandyBus.HandyBus.DTO.UserSignUpRequestDTO;
-import HandyBus.HandyBus.DTO.UserSignUpResponseDTO;
+import HandyBus.HandyBus.DTO.UserDTO;
 import HandyBus.HandyBus.Service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,12 +19,11 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserSignUpResponseDTO> createUser(@RequestBody UserSignUpRequestDTO userSignUpRequestDTO) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO.SignUpRequest user) {
         // The password hashing should be done inside the service layer, not exposed to the controller.
 
-        UserSignUpResponseDTO newUser = userServiceImpl.createUser(userSignUpRequestDTO);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        UserDTO createdUser = userServiceImpl.createUser(user);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    // ... other REST endpoints ...
 }

@@ -1,10 +1,9 @@
 package HandyBus.HandyBus.Service;
 
-import HandyBus.HandyBus.DTO.ReservationSignUpRequestDTO;
-import HandyBus.HandyBus.DTO.ReservationSignUpResponseDTO;
+import HandyBus.HandyBus.DTO.ReservationDTO;
 
 public interface ReservationService {
 
-    ReservationSignUpResponseDTO createReservation(ReservationSignUpRequestDTO reservationSignUpRequestDTO);
+    ReservationDTO createReservation(ReservationDTO.SignUp reservation);
 
 }
