@@ -1,0 +1,1207 @@
+package HandyBus.HandyBus;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class HandyBusApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(HandyBusApplication.class, args);
+	}
+
+}
+
+
+package HandyBus.HandyBus.Controller.Admin;
+
+import HandyBus.HandyBus.DTO.ConcertDTO;
+import HandyBus.HandyBus.DTO.IdolDTO;
+import HandyBus.HandyBus.Service.ConcertServiceImpl;
+import HandyBus.HandyBus.Service.IdolServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/admin")
+public class AdminConcertController {
+
+    private final ConcertServiceImpl concertServiceImpl;
+    private final IdolServiceImpl idolServiceImpl;
+
+    @Autowired
+    public AdminConcertController(ConcertServiceImpl concertServiceImpl, IdolServiceImpl idolServiceImpl) {
+        this.concertServiceImpl = concertServiceImpl;
+        this.idolServiceImpl = idolServiceImpl;
+    }
+
+    @GetMapping //need to change this code
+    public ResponseEntity<List<ConcertDTO>> getConcertAndReservationList() {
+        List<ConcertDTO> concertList = concertServiceImpl.findUpcomingConcerts(); // This should call your service layer to get the list
+        return new ResponseEntity<>(concertList, HttpStatus.OK);
+    }
+
+    @GetMapping("/concertsignup")
+    public ResponseEntity<List<String>> getIdolNameList() {
+
+        List<IdolDTO> idolDTOList = idolServiceImpl.findAllSorted();
+
+        List<String> idolNameList = idolDTOList.stream()
+                .map(IdolDTO::getName)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(idolNameList);
+    }
+
+    @PostMapping("/concertsignup")
+    public ResponseEntity<Void> createConcert(@RequestBody ConcertDTO.SignUp concert) {
+
+        concertServiceImpl.createConcert(concert);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        // if the front gets the ok status, redirect to the concert signup page
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<ConcertDTO>> getAllConcerts() {
+        List<ConcertDTO> allConcerts = concertServiceImpl.findAllSorted();
+        return ResponseEntity.ok(allConcerts);
+    }
+
+    @DeleteMapping("/concert/{id}/delete")
+    public ResponseEntity<Void> deleteConcert(@PathVariable Long id) {
+        concertServiceImpl.deleteConcert(id);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+}
+
+
+package HandyBus.HandyBus.Controller.Admin;
+
+import HandyBus.HandyBus.DTO.ConcertDTO;
+import HandyBus.HandyBus.DTO.ReservationDTO;
+import HandyBus.HandyBus.Service.ConcertServiceImpl;
+import HandyBus.HandyBus.Service.ReservationServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("admin/reservationsignup")
+public class AdminReservationController {
+
+    private final ReservationServiceImpl reservationServiceImpl;
+    private final ConcertServiceImpl concertServiceImpl;
+
+    @Autowired
+    public AdminReservationController(ReservationServiceImpl reservationServiceImpl, ConcertServiceImpl concertServiceImpl){
+        this.reservationServiceImpl = reservationServiceImpl;
+        this.concertServiceImpl = concertServiceImpl;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ConcertDTO>> getConcerts(){
+
+        List<ConcertDTO> concertList = concertServiceImpl.findUpcomingConcerts();
+
+        return new ResponseEntity<>(concertList, HttpStatus.OK);
+    }
+
+
+    @PostMapping
+    public ResponseEntity<?> createReservation(@RequestBody ReservationDTO.SignUp reservation){
+
+        reservationServiceImpl.createReservation(reservation);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+}
+
+
+package HandyBus.HandyBus.Controller.User;
+
+import HandyBus.HandyBus.DTO.ReservationDTO;
+import HandyBus.HandyBus.DTO.UserDTO;
+import HandyBus.HandyBus.Service.ReservationServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/reservations")
+public class ReservationController {
+
+    private final ReservationServiceImpl reservationService;
+
+    @Autowired
+    public ReservationController(ReservationServiceImpl reservationService){
+        this.reservationService = reservationService;
+    }
+
+    public ResponseEntity<Void> signUpReservation(UserDTO user, ReservationDTO reservation){
+
+        return
+    }
+}
+
+
+package HandyBus.HandyBus.Controller.User;
+
+import HandyBus.HandyBus.DTO.UserDTO;
+import HandyBus.HandyBus.Service.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final UserServiceImpl userServiceImpl;
+
+    @Autowired
+    public UserController(UserServiceImpl userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO.SignUpRequest user) {
+        // The password hashing should be done inside the service layer, not exposed to the controller.
+
+        UserDTO createdUser = userServiceImpl.createUser(user);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<UserDTO> updateUser(@ResponseBody UserDTO user){
+
+        UserDTO updatedUser = userServiceImpl.updateUser(user, userId);
+
+        return
+    }
+
+}
+
+
+package HandyBus.HandyBus.Domain;
+
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor
+public class ConcertDomain {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long concertId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idol_id")
+    private IdolDomain idol;
+
+    @Column(nullable = false, length = 100)
+    private String name; // Concert name
+
+    @Column(nullable = false)
+    private LocalDate date; // Date of the concert
+
+    @Column(nullable = false)
+    private LocalTime startTime; // Start time of the concert
+
+    @Column(nullable = false)
+    private LocalTime endTime; // End time of the concert
+
+    @Column(nullable = false)
+    private String locationAddress;
+
+    @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL)
+    private List<ReservationDomain> reservationList = new ArrayList<>(); // One-to-many relationship with ReservationDomain
+
+    private String imageUrl;
+
+    @Builder
+    public ConcertDomain(String name, LocalDate date, LocalTime startTime, LocalTime endTime, String locationAddress, String imageUrl){
+        this.name = name;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.locationAddress = locationAddress;
+        this.imageUrl = imageUrl;
+    }
+}
+
+
+package HandyBus.HandyBus.Domain;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class IdolDomain {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idolId;
+
+    private String name;
+
+    @ElementCollection
+    private List<String> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "idol", cascade = CascadeType.ALL)
+    private List<ConcertDomain> concertList = new ArrayList<>();
+
+    @Builder
+    public IdolDomain(String name, List<String> members, List<ConcertDomain> concertList){
+        this.name = name;
+        this.members = members;
+        this.concertList = concertList;
+    }
+
+}
+
+package HandyBus.HandyBus.Domain;
+
+import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
+import HandyBus.HandyBus.Domain.Subclass.Region;
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor
+public class ReservationDomain {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long reservationId; // Assuming there is an ID field
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "concert_id")
+    private ConcertDomain concert; // Relation to ConcertDomain
+
+    private Region region;
+
+    @OneToMany(mappedBy = "reservation")
+    private List<UserReservationDomain> userReservationList = new ArrayList<>();
+
+    @Column(nullable = false)
+    private LocalDateTime requiredArriveTime; // Using LocalDateTime for date-time fields
+
+    @Enumerated(EnumType.STRING)
+    private ProceedStatus proceedStatus; // Enum for status
+
+    @Column(nullable = false)
+    private int price; // Price field
+
+    @Column(length = 500)
+    private String qrImage; // URL field for QR image, length can be adjusted based on expected URL length
+
+    @Column(length = 500)
+    private String chatRoomUrl; // URL field for chat room
+
+    private String imageUrl;
+
+    @Builder
+    public ReservationDomain(ConcertDomain concert, Region region,
+                             List<UserReservationDomain> userReservationList,
+                             LocalDateTime requiredArriveTime, ProceedStatus proceedStatus,
+                             int price, String qrImage, String chatRoomUrl, String imageUrl) {
+        this.concert = concert;
+        this.region = region;
+        this.userReservationList = userReservationList;
+        this.requiredArriveTime = requiredArriveTime;
+        this.proceedStatus = proceedStatus;
+        this.price = price;
+        this.qrImage = qrImage;
+        this.chatRoomUrl = chatRoomUrl;
+        this.imageUrl = imageUrl;
+    }
+
+
+
+}
+
+
+package HandyBus.HandyBus.Domain;
+
+import HandyBus.HandyBus.Domain.Subclass.Region;
+import HandyBus.HandyBus.Domain.Subclass.Gender;
+import lombok.*;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@NoArgsConstructor
+@Entity
+@Getter
+@Table(name = "users")
+public class UserDomain {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String passwordHash;
+
+    @Column(nullable = false)
+    private int phoneNumber;
+
+    @Column(nullable = false)
+    private String postCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Region region;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserReservationDomain> userReservationList = new ArrayList<>(); // Assuming Reservation is an entity that references UserDomain
+
+
+    @Builder
+    public UserDomain(String name, String email, String passwordHash, int phoneNumber, String postCode, Region region, Gender gender, List<UserReservationDomain> userReservationList){
+        this.name = name;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.phoneNumber = phoneNumber;
+        this.postCode = postCode;
+        this.region = region;
+        this.gender = gender;
+        this.userReservationList = userReservationList;
+    }
+
+    // 이거 service나 repository 쪽으로 빼고 싶음.
+    public Region returnRegion(String postcode) {
+        int code = Integer.parseInt(postcode);
+
+        // Define ranges for major regions
+        // Note: These ranges are for illustrative purposes and may not be accurate.
+        // You should replace these with the actual postal code ranges for each region.
+        if (code >= 0 && code <= 9999) {
+            return Region.SEOUL;
+        } else if (code >= 46000 && code <= 49999) {
+            return Region.BUSAN;
+        } else if (code >= 41000 && code <= 43999) {
+            return Region.DAEGU;
+        } else if (code >= 34000 && code <= 35999) {
+            return Region.DAEJEON;
+        } else {
+            return null;
+        }
+    }
+
+    // Constructors, getters, and setters
+
+}
+
+
+package HandyBus.HandyBus.Domain;
+
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.apache.catalina.User;
+
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor
+public class UserReservationDomain {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userReservationId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserDomain user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id")
+    private ReservationDomain reservation;
+
+    @Column(nullable = false)
+    private Boolean hasPaid;
+
+    @Builder
+    public UserReservationDomain(UserDomain user, ReservationDomain reservation, Boolean hasPaid){
+        this.user = user;
+        this.reservation = reservation;
+        this.hasPaid = hasPaid;
+    }
+}
+
+package HandyBus.HandyBus.Domain.Subclass;
+
+
+public enum Gender {
+    MALE,
+    FEMALE;
+}
+
+
+package HandyBus.HandyBus.Domain.Subclass;
+
+public enum ProceedStatus {
+    PENDING,
+    CONFIRMED,
+    CANCELLED,
+    COMPLETED
+}
+
+
+package HandyBus.HandyBus.Domain.Subclass;
+
+public enum Region {
+
+    SEOUL,
+
+    BUSAN,
+
+    DAEGU,
+
+    DAEJEON,
+
+    INCHEON,
+
+    GWANGJU,
+
+    ULSAN,
+
+    창원,
+
+    청주,
+
+    천안,
+
+    전주,
+
+    김해,
+
+    포항,
+
+    원주,
+
+    강릉,
+
+    여수,
+
+    순천,
+
+    목포;
+
+
+}
+
+
+package HandyBus.HandyBus.DTO;
+
+import HandyBus.HandyBus.Domain.ConcertDomain;
+import lombok.Getter;
+import lombok.Builder;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+@Builder
+@Getter
+public class ConcertDTO {
+
+    private Long concertId;
+    private String name;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private String location;
+    private String imageUrl;
+    private List<ReservationDTO> reservationDTOList;
+
+    public static ConcertDTO toDTO(ConcertDomain concert) {
+        return ConcertDTO.builder()
+                .concertId(concert.getConcertId())
+                .name(concert.getName())
+                .date(concert.getDate())
+                .startTime(concert.getStartTime())
+                .endTime(concert.getEndTime())
+                .location(concert.getLocationAddress())
+                .imageUrl(concert.getImageUrl())
+                .build();
+    }
+
+    public ConcertDomain toEntity() {
+        return ConcertDomain.builder()
+                .name(this.name)
+                .date(this.date)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
+                .locationAddress(this.location)
+                .imageUrl(this.imageUrl)
+                .build();
+    }
+
+    @Builder
+    public static class SignUp {
+        private String name;
+        private LocalDate date;
+        private LocalTime startTime;
+        private LocalTime endTime;
+        private String location;
+        private String imageUrl;
+
+        public ConcertDomain toEntity() {
+            return ConcertDomain.builder()
+                    .name(this.name)
+                    .date(this.date)
+                    .startTime(this.startTime)
+                    .endTime(this.endTime)
+                    .locationAddress(this.location)
+                    .imageUrl(this.imageUrl)
+                    .build();
+        }
+    }
+}
+
+
+package HandyBus.HandyBus.DTO;
+
+import HandyBus.HandyBus.Domain.IdolDomain;
+import lombok.Builder;
+import lombok.Getter;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Builder
+public class IdolDTO {
+
+    private Long idolId;
+    @Getter
+    private String name;
+    private List<String> members;
+    private List<ConcertDTO> concertList;
+
+    public static IdolDTO toDTO(IdolDomain idol) {
+        return IdolDTO.builder()
+                .idolId(idol.getIdolId())
+                .name(idol.getName())
+                .members(idol.getMembers())
+                .concertList(idol.getConcertList().stream().map(ConcertDTO::toDTO).collect(Collectors.toList()))
+                .build();
+    }
+
+    public IdolDomain toEntity() {
+        return IdolDomain.builder()
+                .name(this.name)
+                .members(this.members)
+                .concertList(this.concertList.stream().map(ConcertDTO::toEntity).collect(Collectors.toList()))
+                .build();
+    }
+
+    public static class SignUp {
+        private String name;
+        private List<String> members;
+
+
+        public IdolDomain toEntity() {
+            return IdolDomain.builder()
+                    .name(this.name)
+                    .members(this.members)
+                    .build();
+        }
+    }
+
+}
+
+
+package HandyBus.HandyBus.DTO;
+
+import HandyBus.HandyBus.Domain.ReservationDomain;
+import HandyBus.HandyBus.Domain.Subclass.ProceedStatus;
+import HandyBus.HandyBus.Domain.Subclass.Region;
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Builder
+public class ReservationDTO {
+
+    private Long reservationId;
+    private ConcertDTO concertDTO;
+    private LocalDateTime requiredArriveTime;
+    private ProceedStatus proceedStatus;
+    private Region region;
+    private int price;
+    private String qrImage;
+    private String chatRoomUrl;
+    private String imageUrl;
+    private List<UserReservationDTO> userReservationList;
+
+    public static ReservationDTO toDTO(ReservationDomain reservation) {
+        return ReservationDTO.builder()
+                .reservationId(reservation.getReservationId())
+                .requiredArriveTime(reservation.getRequiredArriveTime())
+                .proceedStatus(reservation.getProceedStatus())
+                .region(reservation.getRegion())
+                .price(reservation.getPrice())
+                .qrImage(reservation.getQrImage())
+                .chatRoomUrl(reservation.getChatRoomUrl())
+                .imageUrl(reservation.getImageUrl())
+                .userReservationList(reservation.getUserReservationList().stream().map(UserReservationDTO::toDTO).collect(Collectors.toList()))
+                .build();
+    }
+
+    public ReservationDomain toEntity(){
+        return ReservationDomain.builder()
+                .concert(this.concertDTO.toEntity())
+                .region(this.region)
+                .requiredArriveTime(this.requiredArriveTime)
+                .proceedStatus(this.proceedStatus)
+                .price(this.price)
+                .qrImage(this.qrImage)
+                .chatRoomUrl(this.chatRoomUrl)
+                .imageUrl(this.imageUrl)
+                .userReservationList(this.userReservationList.stream().map(UserReservationDTO::toEntity).collect(Collectors.toList()))
+                .build();
+    }
+
+    @Builder
+    public static class SignUp {
+        private ConcertDTO concertDTO;
+        private String name;
+        private Region region;
+        private LocalTime requiredArriveTime;
+        private String reservationImage;
+        private String qrImage;
+        private String chatRoomUrl;
+
+        public ReservationDomain toEntity() {
+            return ReservationDomain.builder()
+                    .concert(this.concertDTO.toEntity())
+                    .requiredArriveTime(LocalDateTime.from(this.requiredArriveTime))
+                    .qrImage(this.qrImage)
+                    .region(this.region)
+                    .chatRoomUrl(this.chatRoomUrl)
+                    .imageUrl(this.reservationImage)
+                    .build();
+        }
+    }
+}
+
+
+package HandyBus.HandyBus.DTO;
+
+import HandyBus.HandyBus.Domain.Subclass.Region;
+import HandyBus.HandyBus.Domain.UserDomain;
+import HandyBus.HandyBus.Domain.Subclass.Gender;
+import HandyBus.HandyBus.Domain.UserReservationDomain;
+import lombok.Getter;
+import lombok.Builder;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Builder
+public class UserDTO {
+
+    private Long userId;
+    private String name;
+    private String email;
+    private int phoneNumber;
+    private String postCode;
+    private Region region;
+    private Gender gender;
+    private List<UserReservationDTO> userReservationList;
+
+    public static UserDTO toDTO(UserDomain user) {
+        return UserDTO.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .region(user.getRegion())
+                .phoneNumber(user.getPhoneNumber())
+                .postCode(user.getPostCode())
+                .gender(user.getGender())
+                .userReservationList(user.getUserReservationList().stream().map(UserReservationDTO::toDTO).collect(Collectors.toList()))
+                .build();
+    }
+
+    public UserDomain toEntity(){
+        return UserDomain.builder()
+                .name(this.name)
+                .email(this.email)
+                .phoneNumber(this.phoneNumber)
+                .postCode(this.postCode)
+                .region(this.region)
+                .gender(this.gender)
+                .userReservationList(this.userReservationList.stream().map(UserReservationDTO::toEntity).collect(Collectors.toList()))
+                .build();
+    }
+
+    @Builder
+    public static class SignUpRequest {
+        private String email;
+        private String name;
+        private String password;
+        private String phoneNumber;
+        private String postCode;
+        private Gender gender;
+
+        public UserDomain toEntity() {
+            return UserDomain.builder()
+                    .name(this.name)
+                    .email(this.email)
+                    .passwordHash(this.password) // 여기서 비밀번호 해싱이 필요할 수 있음
+                    .phoneNumber(Integer.parseInt(this.phoneNumber))
+                    .postCode(this.postCode)
+                    .gender(this.gender)
+                    .build();
+        }
+    }
+
+    @Builder
+    public static class SignUpResponse {
+        private String name;
+
+
+    }
+}
+
+
+package HandyBus.HandyBus.DTO;
+
+import HandyBus.HandyBus.Domain.UserReservationDomain;
+import lombok.Builder;
+
+@Builder
+public class UserReservationDTO {
+
+    private Long userReservationId;
+    private UserDTO userDTO;
+    private ReservationDTO reservationDTO;
+    private Boolean hasPaid;
+
+    public static UserReservationDTO toDTO(UserReservationDomain userReservation){
+        return UserReservationDTO.builder()
+                .userReservationId(userReservation.getUserReservationId())
+                .userDTO(UserDTO.toDTO(userReservation.getUser()))
+                .reservationDTO(ReservationDTO.toDTO(userReservation.getReservation()))
+                .hasPaid(userReservation.getHasPaid())
+                .build();
+    }
+
+    public UserReservationDomain toEntity(){
+        return UserReservationDomain.builder()
+                .user(this.userDTO.toEntity())
+                .reservation(this.reservationDTO.toEntity())
+                .hasPaid(this.hasPaid)
+                .build();
+    }
+}
+
+
+package HandyBus.HandyBus.Repository;
+
+import HandyBus.HandyBus.Domain.ConcertDomain;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ConcertRepository extends JpaRepository<ConcertDomain, Long> {
+}
+
+
+package HandyBus.HandyBus.Repository;
+
+import HandyBus.HandyBus.Domain.IdolDomain;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface IdolRepository extends JpaRepository<IdolDomain, Long> {
+}
+
+
+package HandyBus.HandyBus.Repository;
+
+import HandyBus.HandyBus.Domain.ReservationDomain;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReservationRepository extends JpaRepository<ReservationDomain, Long> {
+}
+
+
+package HandyBus.HandyBus.Repository;
+
+import HandyBus.HandyBus.Domain.UserDomain;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+public interface UserRepository extends JpaRepository<UserDomain, Long> {
+    // Custom database queries can be added here
+}
+
+
+package HandyBus.HandyBus.Repository;
+
+import HandyBus.HandyBus.Domain.UserReservationDomain;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserReservationRepository extends JpaRepository<UserReservationDomain, Long> {
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.ConcertDTO;
+
+import java.util.List;
+
+public interface ConcertService {
+
+    ConcertDTO createConcert(ConcertDTO.SignUp concert);
+
+    List<ConcertDTO> findAll();
+
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.ConcertDTO;
+import HandyBus.HandyBus.DTO.ReservationDTO;
+import HandyBus.HandyBus.Domain.ConcertDomain;
+import HandyBus.HandyBus.Repository.ConcertRepository;
+
+import org.aspectj.weaver.patterns.ConcreteCflowPointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class ConcertServiceImpl implements ConcertService{
+
+    private final ConcertRepository concertRepository;
+
+    @Autowired
+    public ConcertServiceImpl(ConcertRepository concertRepository){
+        this.concertRepository = concertRepository;
+    }
+
+    @Override
+    public ConcertDTO createConcert(ConcertDTO.SignUp concert){
+
+        ConcertDomain createdConcert = concertRepository.save(concert.toEntity());
+
+        return ConcertDTO.toDTO(createdConcert);
+    }
+
+//    public ConcertDTO addReservation(ReservationDTO reservation){
+//
+//        // append the ConcertDTO's private List<ReservationDTO> reservationDTOList
+//        // do we need to update after appending the reservationDTO to the concertDTO?
+//        // complete this addReservation function
+//    }
+
+    @Override
+    public List<ConcertDTO> findAll() {
+        return concertRepository.findAll().stream()
+                .map(ConcertDTO::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ConcertDTO> findUpcomingConcerts() {
+        LocalDate today = LocalDate.now(); // Get the current date
+
+        return concertRepository.findAll().stream()
+                .filter(concert -> concert.getDate().isAfter(today)) // Filter concerts with a date after today
+                .map(ConcertDTO::toDTO) // Convert to ConcertSignUpDTO
+                .collect(Collectors.toList());
+    }
+
+    public ConcertDTO findBYId(Long id){
+        return ConcertDTO.toDTO(concertRepository.findById(id));
+    }
+
+    public List<ConcertDTO> findAllSorted() {
+        return concertRepository.findAll().stream()
+                .sorted(Comparator.comparing(ConcertDomain::getDate)
+                        .thenComparing(ConcertDomain::getName))
+                .map(ConcertDTO::toDTO)
+                .collect(Collectors.toList());
+
+    }
+
+    public void deleteConcert(Long id) {
+        concertRepository.deleteById(id);
+    }
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.IdolDTO;
+
+import java.util.List;
+
+public interface IdolService {
+    IdolDTO createIdol(IdolDTO.SignUp idol);
+    List<IdolDTO> findAll();
+    // IdolDTO updateIdol(IdolDTO idolDto);
+    // void deleteIdol(Long id);
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.IdolDTO;
+import HandyBus.HandyBus.Domain.IdolDomain;
+import HandyBus.HandyBus.Repository.IdolRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class IdolServiceImpl implements IdolService{
+
+    private final IdolRepository idolRepository;
+
+    @Autowired
+    public IdolServiceImpl(IdolRepository idolRepository){
+        this.idolRepository = idolRepository;
+    }
+
+    @Override
+    public IdolDTO createIdol(IdolDTO.SignUp idol) {
+
+        IdolDomain createdIdol = idolRepository.save(idol.toEntity());
+
+        return IdolDTO.toDTO(createdIdol);
+    }
+
+    @Override
+    public List<IdolDTO> findAll() {
+
+        return idolRepository.findAll().stream()
+                .map(IdolDTO::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<IdolDTO> findAllSorted() {
+        return idolRepository.findAll().stream()
+                .map(IdolDTO::toDTO)
+                .sorted(Comparator.comparing(IdolDTO::getName))
+                .collect(Collectors.toList());
+    }
+
+
+
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.ReservationDTO;
+
+public interface ReservationService {
+
+    ReservationDTO createReservation(ReservationDTO.SignUp reservation);
+
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.ReservationDTO;
+import HandyBus.HandyBus.Domain.ReservationDomain;
+import HandyBus.HandyBus.Repository.ReservationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalTime;
+import java.util.List;
+
+@Service
+@Transactional
+public class ReservationServiceImpl implements ReservationService{
+
+    private final ReservationRepository reservationRepository;
+
+    @Autowired
+    public ReservationServiceImpl(ReservationRepository reservationRepository){
+        this.reservationRepository = reservationRepository;
+    }
+
+    @Override
+    public ReservationDTO createReservation(ReservationDTO.SignUp reservation){
+
+        ReservationDomain createdReservation = reservationRepository.save(reservation.toEntity());
+
+        return ReservationDTO.toDTO(createdReservation);
+    }
+
+
+    public List<ReservationDTO> finAll(){
+
+        return null;
+    }
+
+
+}
+
+
+package HandyBus.HandyBus.Service;
+
+public interface UserReservationService {
+
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class UserReservationServiceImpl implements UserReservationService{
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.UserDTO;
+import HandyBus.HandyBus.Domain.UserDomain;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface UserService {
+    UserDTO createUser(UserDTO.SignUpRequest user);
+
+    Optional<UserDomain> getUserById(Long id);
+
+    List<UserDomain> getAllUsers();
+
+    void deleteUser(Long id);
+
+
+}
+
+
+package HandyBus.HandyBus.Service;
+
+import HandyBus.HandyBus.DTO.UserDTO;
+import HandyBus.HandyBus.Domain.UserDomain;
+import HandyBus.HandyBus.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@Transactional
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserDTO createUser(UserDTO.SignUpRequest user) {
+
+        UserDomain createdUser = userRepository.save(user.toEntity());
+
+        return UserDTO.toDTO(createdUser);
+    }
+
+    @Override
+    public Optional<UserDomain> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public List<UserDomain> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+
+
+
+}
+
+
