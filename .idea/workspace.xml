@@ -5,52 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bea592f2-f782-40db-b606-deed095c8608" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/HandyBus note.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extractcode/extractcode.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extractcode/output.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Controller/Admin/AdminConcertController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Controller/Admin/AdminReservationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Controller/User/ReservationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Controller/User/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/DTO/ConcertDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/DTO/IdolDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/DTO/ReservationDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/DTO/UserDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/DTO/UserReservationDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/ConcertDomain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/IdolDomain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/ReservationDomain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/Subclass/Gender.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/Subclass/ProceedStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/Subclass/Region.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/UserDomain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Domain/UserReservationDomain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/HandyBusApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Repository/ConcertRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Repository/IdolRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Repository/ReservationRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Repository/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Repository/UserReservationRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/ConcertService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/ConcertServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/IdolService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/IdolServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/ReservationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/ReservationServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/UserReservationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/UserReservationServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HandyBus/HandyBus/Service/UserServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/HandyBus/HandyBus/HandyBusApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/HandyBus/HandyBus/Service/IdolServiceImplTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,10 +25,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2YI62xufgJ3JcfGT8X9XR6rn9Pq" />
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
@@ -82,7 +39,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "android.gradle.sync.needed": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Github/HandyBus/backend"
+    "last_opened_file_path": "C:/Github/Univ3Project"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
