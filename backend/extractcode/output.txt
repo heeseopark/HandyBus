@@ -134,9 +134,14 @@ package HandyBus.HandyBus.Controller.User;
 
 import HandyBus.HandyBus.DTO.ReservationDTO;
 import HandyBus.HandyBus.DTO.UserDTO;
+import HandyBus.HandyBus.DTO.UserReservationDTO;
+import HandyBus.HandyBus.Domain.UserReservationDomain;
 import HandyBus.HandyBus.Service.ReservationServiceImpl;
+import HandyBus.HandyBus.Service.UserReservationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -145,16 +150,30 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReservationController {
 
     private final ReservationServiceImpl reservationService;
+    private final UserReservationServiceImpl userReservationService;
 
     @Autowired
-    public ReservationController(ReservationServiceImpl reservationService){
+    public ReservationController(ReservationServiceImpl reservationService, UserReservationServiceImpl userReservationService){
         this.reservationService = reservationService;
+        this.userReservationService = userReservationService;
     }
 
+    @PostMapping("/signup")
     public ResponseEntity<Void> signUpReservation(UserDTO user, ReservationDTO reservation){
 
-        return
+        if(user.getRegion().equals(reservation.getRegion())) {
+
+            UserReservationDTO.SignUp userReservation = UserReservationDTO.SignUp.builder().userDTO(user).reservationDTO(reservation).hasPaid(null).build();
+
+            userReservationService.createUserReservation(userReservation); // Assuming such a method exists
+
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            // If regions do not match, return an error response
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
+
 }
 
 
@@ -184,13 +203,6 @@ public class UserController {
 
         UserDTO createdUser = userServiceImpl.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-    }
-
-    public ResponseEntity<UserDTO> updateUser(@ResponseBody UserDTO user){
-
-        UserDTO updatedUser = userServiceImpl.updateUser(user, userId);
-
-        return
     }
 
 }
@@ -458,6 +470,8 @@ import java.util.List;
 @NoArgsConstructor
 public class UserReservationDomain {
 
+    // cascade 설정 고민하기
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userReservationId;
@@ -610,6 +624,14 @@ public class ConcertDTO {
                     .build();
         }
     }
+
+    public ConcertDTO addReservation(ReservationDTO reservation){
+
+    }
+
+    public ConcertDTO removeReservation(ReservationDTO reservation){
+        return
+    }
 }
 
 
@@ -677,6 +699,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 @Builder
 public class ReservationDTO {
 
@@ -755,6 +778,7 @@ import lombok.Builder;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 @Builder
 public class UserDTO {
 
@@ -852,6 +876,23 @@ public class UserReservationDTO {
                 .hasPaid(this.hasPaid)
                 .build();
     }
+
+    @Builder
+    public static class SignUp {
+
+        private UserDTO userDTO;
+        private ReservationDTO reservationDTO;
+        private Boolean hasPaid;
+
+        public UserReservationDomain toEntity() {
+            return UserReservationDomain.builder()
+                    .user(this.userDTO.toEntity())
+                    .reservation(this.reservationDTO.toEntity())
+                    .hasPaid(this.hasPaid)
+                    .build();
+        }
+    }
+
 }
 
 
@@ -992,6 +1033,8 @@ public class ConcertServiceImpl implements ConcertService{
     public void deleteConcert(Long id) {
         concertRepository.deleteById(id);
     }
+
+
 }
 
 
@@ -1115,19 +1158,42 @@ public class ReservationServiceImpl implements ReservationService{
 
 package HandyBus.HandyBus.Service;
 
+import HandyBus.HandyBus.DTO.UserReservationDTO;
+import HandyBus.HandyBus.Domain.UserReservationDomain;
+
 public interface UserReservationService {
+
+    UserReservationDTO createUserReservation(UserReservationDTO.SignUp userReservation);
 
 }
 
 
 package HandyBus.HandyBus.Service;
 
+import HandyBus.HandyBus.DTO.UserReservationDTO;
+import HandyBus.HandyBus.Domain.UserReservationDomain;
+import HandyBus.HandyBus.Repository.UserReservationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class UserReservationServiceImpl implements UserReservationService{
+
+    private final UserReservationRepository userReservationRepository;
+
+    @Autowired
+    public UserReservationServiceImpl(UserReservationRepository userReservationRepository){
+        this.userReservationRepository = userReservationRepository;
+    }
+
+    @Override
+    public UserReservationDTO createUserReservation(UserReservationDTO.SignUp userReservation){
+        UserReservationDomain createdUserReservation = userReservationRepository.save(userReservation.toEntity());
+        return UserReservationDTO.toDTO(createdUserReservation);
+    }
+
 }
 
 
