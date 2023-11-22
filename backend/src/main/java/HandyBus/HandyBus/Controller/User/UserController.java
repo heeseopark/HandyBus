@@ -26,11 +26,4 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<UserDTO> updateUser(@ResponseBody UserDTO user){
-
-        UserDTO updatedUser = userServiceImpl.updateUser(user, userId);
-
-        return
-    }
-
 }
