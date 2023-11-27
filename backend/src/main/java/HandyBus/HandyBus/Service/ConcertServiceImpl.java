@@ -5,6 +5,7 @@ import HandyBus.HandyBus.DTO.ReservationDTO;
 import HandyBus.HandyBus.Domain.ConcertDomain;
 import HandyBus.HandyBus.Repository.ConcertRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,9 +58,12 @@ public class ConcertServiceImpl implements ConcertService{
                 .collect(Collectors.toList());
     }
 
-    public ConcertDTO findBYId(Long id){
-        return ConcertDTO.toDTO(concertRepository.findById(id));
+    public ConcertDTO findById(Long id) {
+        return concertRepository.findById(id)
+                .map(ConcertDTO::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Concert not found for id: " + id));
     }
+
 
     public List<ConcertDTO> findAllSorted() {
         return concertRepository.findAll().stream()

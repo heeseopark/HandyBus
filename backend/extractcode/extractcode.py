@@ -28,3 +28,5 @@ code = extract_java_code_from_directory(directory_path)
 
 output_files = "C:/Github/HandyBus/backend/extractcode/output.txt"
 save_to_file(code, output_files)
+
+print("extract code complete")
