@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("api/admin/")
 public class AdminConcertController {
 
     private final ConcertServiceImpl concertServiceImpl;
@@ -31,7 +31,7 @@ public class AdminConcertController {
         return new ResponseEntity<>(concertList, HttpStatus.OK);
     }
 
-    @GetMapping("/concertsignup")
+    @GetMapping("concertsignup")
     public ResponseEntity<List<String>> getIdolNameList() {
 
         List<IdolDTO> idolDTOList = idolServiceImpl.findAllSorted();
@@ -43,7 +43,7 @@ public class AdminConcertController {
         return ResponseEntity.ok(idolNameList);
     }
 
-    @PostMapping("/concertsignup")
+    @PostMapping("concertsignup")
     public ResponseEntity<Void> createConcert(@RequestBody ConcertDTO.SignUp concert) {
 
         concertServiceImpl.createConcert(concert);
@@ -53,13 +53,13 @@ public class AdminConcertController {
         // if the front gets the ok status, redirect to the concert signup page
     }
 
-    @GetMapping("/history")
+    @GetMapping("history")
     public ResponseEntity<List<ConcertDTO>> getAllConcerts() {
         List<ConcertDTO> allConcerts = concertServiceImpl.findAllSorted();
         return ResponseEntity.ok(allConcerts);
     }
 
-    @DeleteMapping("/concert/{id}/delete")
+    @DeleteMapping("concert/{id}/delete")
     public ResponseEntity<Void> deleteConcert(@PathVariable Long id) {
         concertServiceImpl.deleteConcert(id);
 

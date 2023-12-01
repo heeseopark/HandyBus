@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("api/users"/)
 public class UserController {
 
     private final UserServiceImpl userServiceImpl;
@@ -18,7 +18,7 @@ public class UserController {
         this.userServiceImpl = userServiceImpl;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO.SignUpRequest user) {
         // The password hashing should be done inside the service layer, not exposed to the controller.
 
