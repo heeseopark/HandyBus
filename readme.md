@@ -18,13 +18,4 @@
         - 버스 좌석 선택 기능
     - 관리자
         - 콘서트, 예약 추가 기능
-        - 버스
-- 목표
-    - 기존에 
-
-## 기술 스택
-![Project Architecture for HandyBus](https://drive.google.com/file/d/1Y9vwOHFy7rHhxmPflR5yFOFmDY6krhsS/view?usp=sharing)
-
-# ERD
-![ERD for HandyBus](https://drive.google.com/file/d/1QU5GYETxIcCHFUqLmIvV6JSMkNcblrzJ/view?usp=sharing)
-
+        - 버스 관리
