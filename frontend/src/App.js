@@ -1,21 +1,22 @@
+import logo from './logo.svg';
 import './App.css';
-import React from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import ConcertList from "./pages/ConcertList";
-import ConcertAdd from "./pages/ConcertAdd";
-import ConcertView from "./pages/ConcertView";
-import ConcertEdit from "./pages/ConcertEdit";
-
-export default function App() {
+import Home from './pages/Home';
+import ConcertList from './pages/ConcertList';
+import ConcertDetail from './pages/ConcertDetail';
+import Reserved from './pages/Reserved';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/admin/"  element={<ConcertList/>} />
-        <Route path="/admin/concertsignup"  element={<ConcertAdd/>} />
-        <Route path="/admin/concertlist/edit/:id"  element={<ConcertEdit/>} />
-        <Route path="/admin/concertlist/:id"  element={<ConcertView/>} />
+        <Route path="/" element={<Home />}/>
+        <Route path="/concerts" element={<ConcertList />}/>
+        <Route path="/concerts/:id" element={<ConcertDetail />}/>
+        <Route path="/reserved" element={<Reserved />}/>
       </Routes>
-    </BrowserRouter>
+    </Router>
+
   );
 }
+
+export default App;

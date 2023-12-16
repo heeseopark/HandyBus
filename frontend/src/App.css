@@ -1,38 +1,247 @@
+/* 공통 */
 .App {
-  text-align: center;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  height: 100%;
+  background-color: #f5f5f5;
+  overflow-x: hidden;
+}
+.mobile-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 100%;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+body {
+  font-family: 'Pretendard Variable', sans-serif;
+}
+
+/* Components */
+/* Header */
+.header_wrap {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-bottom: 1px solid #e6e6e6;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 115px;
+  height: 30px;
+}
+
+/* Pages */
+/* Home */
+
+.main-body {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 웹킷 기반 브라우저를 위해 (예: 크롬, 사파리) */
+.main-body::-webkit-scrollbar {
+  display: none;
+}
+
+/* 파이어폭스를 위해 */
+@-moz-document url-prefix() {
+  .main-body {
+    scrollbar-width: none; /* 파이어폭스 64 이상 */
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* IE 및 엣지를 위해 */
+.main-body {
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.carousel {
+  width: 100%;
+  height: 490px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  border-bottom: 20px solid #e6e6e6;
 }
 
-.App-link {
-  color: #61dafb;
+.carousel-poster {
+  border-radius: 10px;
+  width: 370px;
+  max-width: 90%;
+  background-color: #e6e6e6;
+  height: 330px;
+  margin-bottom: 20px;
+}
+.main-icons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 370px;
+  max-width: 90%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.list-all, .list-concert, .list-festival, .list-trip, .list-collecting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.icon-title {
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+#trip-icon {
+  margin-bottom: 2px;
+  margin-top: 5px;
+}
+ 
+#trip-title {
+  margin-top: 6px;
+}
+
+.list-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 20px;
+  width: 390px;
+  max-width: 95%;
+  height: 550px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.realtime-list {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 100%;
+  margin: 20px 20px 0px 0px;
+}
+
+.realtime-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 390px;
+  width: auto;
+  height: auto;
+  overflow-x: auto;
+}
+
+/* 웹킷 기반 브라우저를 위해 (예: 크롬, 사파리) */
+.realtime-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* 파이어폭스를 위해 */
+@-moz-document url-prefix() {
+  .realtime-row {
+    scrollbar-width: none; /* 파이어폭스 64 이상 */
   }
-  to {
-    transform: rotate(360deg);
-  }
+}
+
+/* IE 및 엣지를 위해 */
+.realtime-row {
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.realtime-list-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 15px;
+  height: auto;
+}
+
+.list-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.concert-poster {
+  width: 120px;
+  height: 160px;
+  background-color: #e6e6e6;
+  margin: 10px 10px 0 0;
+}
+
+.concert-title {
+  font-size: 15px;
+  max-width: 120px;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.concert-location {
+  font-size: 8px;
+}
+
+.concert-list {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 100%;
+  margin: 20px 20px 0px 0px;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
