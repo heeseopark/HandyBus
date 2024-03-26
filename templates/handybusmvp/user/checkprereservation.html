@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ concertname }} 대절 신청 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/user/concertreservation.css' %}">
+</head>
+
+<body>
+    <div class="mobile-container shadow-md rounded items-center">
+        <header class="header-fixed shadow-md">
+            <div class="flex justify-between items-center">
+                <div class="logo-container flex-1 flex justify-center items-center">
+                    <img src="{% static 'logo.png' %}" alt="로고" class="logo p-20">
+                </div>
+
+                <div id="hamburger" class="hamburger mr-8">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <div id="nav-menu" class="nav-menu flex flex-col space-y-2 mt-8">
+                <!-- Navigation links go here -->
+                <a href="{% url 'user:concertprereservationlist' %}" class="block bg-gray-500 hover:bg-gray-700 text-white font-bold py-4 px-4 mx-2 rounded text-center">
+                    선예약 모집 중인 대절
+                </a>
+                <a href="{% url 'user:concertreservationlist' %}" class="block bg-gray-500 hover:bg-gray-700 text-white font-bold py-4 px-4 mx-2 rounded text-center">
+                    실예약 모집 중인 대절
+                </a>
+            </div>
+
+        </header>
+
+
+
+        <div class="flex justify-center items-center pt-8">
+            <div class="bg-white w-full content-spacing mx-4">
+                <main class="my-8 pb-4 max-w-4xl mx-auto">
+                    <h1 class="text-2xl font-bold mb-6">선예약 정보 조회</h1>
+                
+                    <form action="{% url 'user:checkprereservationinfo' %}" method="post" class="space-y-6">
+                        {% csrf_token %}
+                
+                        <!-- 선예약 진행 중인 콘서트 이름 선택 드롭다운 -->
+                        <div class="mt-4">
+                            <label for="concert-name" class="block text-sm font-bold mb-2">선예약 대절 이름:</label>
+                            <div class="relative">
+                                <select id="concert-name" name="concert_name" class="block appearance-none w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                    {% for concert in concerts %}
+                                    <option value="{{ concert.id }}">{{ concert.name }} - {{ concert.date|date:"Y M d, D" }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                
+                        <!-- 예약 지역 선택 -->
+                        <div class="mt-4">
+                            <label for="region" class="block text-sm font-bold mb-2">지역 선택:</label>
+                            <div class="relative">
+                                <select id="region" name="region" class="block appearance-none w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                    {% for code, name in regions %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                
+                        <!-- 이름 입력 필드 -->
+                        <div class="mt-4">
+                            <label for="name" class="block text-sm font-bold mb-2">이름:</label>
+                            <input type="text" id="name" name="name" placeholder="이름을 입력하세요" class="w-full px-4 py-3 rounded bg-gray-100 border border-gray-300 leading-tight focus:outline-none focus:bg-white">
+                        </div>
+                
+                        <!-- 전화번호 입력 필드 -->
+                        <div class="mt-4">
+                            <label for="phone-number" class="block text-gray-700 text-sm font-bold mb-2">전화번호:</label>
+                            <div class="flex">
+                                <input type="tel" id="phone-number-1" name="phone_number_1" maxlength="3" pattern="[0-9]*" inputmode="numeric" class="w-20 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2" required> -
+                                <input type="tel" id="phone-number-2" name="phone_number_2" maxlength="4" pattern="[0-9]*" inputmode="numeric" class="w-20 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mx-2" required> -
+                                <input type="tel" id="phone-number-3" name="phone_number_3" maxlength="4" pattern="[0-9]*" inputmode="numeric" class="w-20 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2" required>
+                            </div>
+                        </div>
+                
+                        <!-- 제출 버튼 -->
+                        <div class="flex justify-center mt-6">
+                            <button type="submit" class="px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none">
+                                조회하기
+                            </button>
+                        </div>
+                    </form>
+                </main>
+                
+                
+            </div>
+        </div>
+        <footer class="border-t p-4 footer-fixed">
+            <p class="text-center">HandyBus</p>
+        </footer>
+    </div>
+    <script>
+
+        var hamburger = document.getElementById('hamburger');
+        var navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', function() {
+            navMenu.classList.toggle('open');
+        });
+
+        // Close Navigation Menu when clicking outside
+        document.addEventListener('click', function(event) {
+            var isClickInsideMenu = navMenu.contains(event.target);
+            var isClickInsideHamburger = hamburger.contains(event.target);
+
+            if (!isClickInsideMenu && !isClickInsideHamburger && navMenu.classList.contains('open')) {
+                navMenu.classList.remove('open');
+                hamburger.classList.remove('open');
+            }
+        });
+
+
+    </script>
+
+    <style>
+        /* 기본 모바일 스타일 */
+        .mobile-container {
+            max-width: 100%;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
+
+        }
+
+        /* 넓은 화면을 위한 스타일 (예: 768px 이상) */
+        @media (min-width: 768px) {
+            .mobile-container {
+                max-width: 768px;
+                /* 최대 너비 제한 */
+                margin: 0 auto;
+                /* 중앙 정렬 */
+                z-index: 1;
+            }
+
+            .header-fixed,
+            footer {
+                max-width: 768px;
+                /* 최대 너비 제한 */
+                margin-left: auto;
+                margin-right: auto;
+                z-index: 1;
+            }
+
+        }
+
+        /* custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 20px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #d6dee1;
+            border-radius: 20px;
+            border: 6px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #a8bbbf;
+        }
+
+        /* 헤더 기본 스타일 */
+        .header-fixed {
+            display: flex;
+            /* 로고를 가운데 정렬하기 위해 flexbox를 사용합니다 */
+            align-items: center;
+            /* 세로 중앙 정렬 */
+            justify-content: center;
+            /* 가로 중앙 정렬 */
+            background-color: #00C896;
+            /* 헤더 배경색 설정 */
+            color: #ffffff;
+            /* 헤더 글자색 설정 */
+            width: 100%;
+            /* 헤더의 너비는 항상 100%입니다 */
+            min-height: 50px;
+            /* 헤더의 최소 높이를 50px로 설정합니다 */
+            max-height: 100px;
+            /* 고정 높이 설정 */
+            justify-content: space-between; /* Adjust alignment */
+
+        }
+
+        /* 로고 컨테이너 스타일 */
+        .logo-container {
+            display: flex;
+            /* 로고를 가운데 정렬하기 위해 flexbox를 사용합니다 */
+            justify-content: center;
+            /* 가로 중앙 정렬 */
+            align-items: center;
+            /* 세로 중앙 정렬 */
+            width: 70%;
+            /* 컨테이너의 너비를 헤더 너비로 설정 */
+        }
+
+        .logo {
+            height: auto;
+            /* 이미지의 높이를 자동으로 조절하여 비율 유지 */
+            max-height: 70%;
+            /* 로고 이미지의 최대 높이를 헤더 높이의 70%로 제한 */
+            justify-content: center;
+            /* 가로 중앙 정렬 */
+            align-items: center;
+            /* 세로 중앙 정렬 */
+        }
+
+        .footer-fixed {
+            display: flex;
+            /* 로고를 가운데 정렬하기 위해 flexbox를 사용합니다 */
+            align-items: center;
+            /* 세로 중앙 정렬 */
+            justify-content: center;
+            /* 가로 중앙 정렬 */
+            background-color: #00C896;
+            /* 헤더 배경색 설정 */
+            color: #ffffff;
+            /* 헤더 글자색 설정 */
+            width: 100%;
+            /* 헤더의 너비는 항상 100%입니다 */
+            z-index: 1;
+        }
+
+        /* Hamburger Icon & Navigation Menu Styles */
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 21px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #333;
+        }
+
+        .hamburger.open div:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open div:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.open div:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .nav-menu {
+            position: fixed; /* 고정 위치 */
+            top: 0; /* 상단에 맞춤 */
+            right: 0; /* 오른쪽에 맞춤 */
+            height: 100vh; /* 전체 화면 높이 */
+            width: 250px; /* 네비게이션 바의 너비 */
+            background: #f3f4f6; /* 배경색 */
+            transform: translateX(100%); /* 네비게이션 바를 오른쪽으로 완전히 이동 */
+            transition: transform 0.3s; /* 부드러운 전환 효과 */
+            z-index: 50; /* z-index 값을 통해 다른 요소들 위에 표시 */
+        }
+
+        .nav-menu.open {
+            transform: translateX(0); /* 화면 안으로 슬라이드 */
+        }
+
+    </style>
+
+</body>
+
+</html>

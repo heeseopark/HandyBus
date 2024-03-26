@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }} 대절 상태 관리 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+</head>
+<body>
+<header class="border-b p-4 header-fixed bg-gray-400">
+    <div class="flex justify-between items-center mt-4 mb-4">
+        <h1 class="text-xl font-bold">{{ name }} 대절 상태 관리 페이지</h1>
+        <a href="{% url 'admin:concertadmin' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded">
+            관리자 페이지 돌아가기
+        </a>
+    </div>
+</header>
+
+<div class="flex justify-center items-center">
+    <div class="bg-white max-w-500px w-full content-spacing">
+        <main class="my-8 p-4">
+            {% for concert, urls in open_chat_urls_dict.items %}
+            <div class="p-2 card-container">
+                <div class="bg-white shadow-md rounded p-4">
+                    <h2 class="text-lg font-semibold">{{ concert.name }} - {{ concert.date }}</h2>
+                    <table class="table-auto mt-4">
+                        <thead>
+                            <tr>
+                                <th class="border px-4 py-2 bg-gray-200">지역</th>
+                                <th class="border px-4 py-2 bg-gray-300">오픈 채팅 URL</th> <!-- TODO: add colums for before confirmation open chat and after confirmation open chat-->
+                                <th class="border px-4 py-2 bg-gray-200">대절 상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tbody>
+                                {% for url in urls %}
+                                <tr>
+                                    <td class="border px-4 py-2">{{ url.get_region_display }}</td>
+                                    <td class="border px-4 py-2"><a href="{{ url.open_chat_url }}" target="_blank">{{ url.open_chat_url }}</a></td>
+                                    <td class="border px-4 py-2">
+                                        <form action="{% url 'admin:updateConcertRegionStatus' url.id %}" method="post" onsubmit="return confirmSubmit()">
+                                            {% csrf_token %}
+                                            <select name="status" class="border p-2 mr-2 mb-2">
+                                                {% for status_value, status_name in url.StatusChoices.choices %}
+                                                <option value="{{ status_value }}" {% if url.status == status_value %} selected {% endif %}>
+                                                    {{ status_name }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">제출</button>
+                                        </form>
+                                        
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                                
+                        </tbody>
+                    </table>
+                    <form action="{% url 'admin:openChatUrl' name %}" method="post" class="mt-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="concert_id" value="{{ concert.id }}">
+                        <select name="region" required class="border p-2 mr-2 mb-2">
+                            <option value="" disabled selected>지역 선택</option>
+                            {% for code, name in regions %}
+                            <option value="{{ code }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="url" name="open_chat_url" placeholder="오픈 채팅 URL" required class="border p-2 mr-2 mb-2" pattern="https?://.*">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">추가하기</button>
+                    </form>
+                </div>
+            </div>
+
+            
+            {% endfor %}
+            
+        </main>
+    </div>
+</div>
+
+<footer class="border-t p-4 footer-fixed bg-gray-400">
+    <p class="text-center">HandyBus 관리자 페이지</p>
+</footer>
+
+<script>
+    function confirmSubmit() {
+        return confirm('정말로 변동하시겠습니까?');
+    }
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,26 @@
+.border-b {
+    border-bottom: 3px solid #333;
+}
+
+.border-t {
+    border-top: 3px solid #333;
+}
+
+.header-fixed {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.footer-fixed {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.content-spacing {
+    padding-top: 60px; /* Adjust based on header height */
+    padding-bottom: 60px; /* Adjust based on footer height */
+}

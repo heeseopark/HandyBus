@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/admin/index.css' %}">
+</head>
+
+<body>
+
+    <header class="border-b p-4 header-fixed bg-gray-400">
+
+        <div class="flex justify-between items-center mt-4 mb-4">
+            <h1 class="text-xl font-bold">{{ name }} 콘서트 관리자 페이지</h1>
+            <a href="{% url 'admin:concertadmin' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded">
+                관리자 페이지 돌아가기
+            </a> 
+        </div>
+
+    </header>
+
+    <div class="flex justify-center items-center min-h-screen bg-gray-100 mt-10 pt-20 py-8 pb-20">
+        <div class="bg-white w-full rounded-lg shadow-md p-6">
+            <main class="flex flex-wrap justify-start my-8 pb-4 overflow-x-auto">
+                {% for item in reservations_list %}
+                <div class="min-w-1/3 p-4">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">{{ item.concert.name }} - {{ item.concert.date }}</h2>
+
+                        <!-- 선예약 현황 표 -->
+                        <div class="overflow-x-auto">
+                            <table class="table-auto w-full mb-6"> <!-- TODO: 행 hover 시 색깔 어둡게 (현재 색상에서 어둡게(동적으로)) -->
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left bg-gray-200 whitespace-nowrap">이름</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300 whitespace-nowrap">전화번호</th>
+                                        <th class="px-4 py-2 text-left bg-gray-200 whitespace-nowrap">여행 타입</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300 whitespace-nowrap">지역</th>
+                                        <th class="px-4 py-2 text-left bg-gray-200 whitespace-nowrap">인원수</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300 whitespace-nowrap">제출 시간</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% load humanize %}
+                                    {% for reservation in item.reservations %}
+                                    <tr>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.user.name }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.user.phone_number }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.travel_type }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.get_region_display }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.head_count }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.created_at }}</td>
+
+
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-3">수요조사 정보가 없습니다.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 지역별 상, 하행 인원 표 -->
+                        <div class="overflow-x-auto mt-6">
+                            <h3 class="text-lg font-bold mb-2">지역별 인원 현황</h3>
+                            <table class="table-auto w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left bg-gray-200">지역</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300">상행 인원</th>
+                                        <th class="px-4 py-2 text-left bg-gray-200">하행 인원</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for region_count in item.region_counts_list %}
+                                    <tr>
+                                        <td class="border px-4 py-2">{{ region_count.region_name }}</td>
+                                        <td class="border px-4 py-2">{{ region_count.upbound }}</td>
+                                        <td class="border px-4 py-2">{{ region_count.downbound }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </main>
+            
+            
+            
+        </div>
+    </div>
+    
+    
+    <footer class="border-t p-4 footer-fixed bg-gray-400">
+        <p class="text-center">HandyBus 관리자 페이지</p>
+    </footer>
+
+</body>
+
+</html>

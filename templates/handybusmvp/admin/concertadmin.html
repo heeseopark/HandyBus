@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>콘서트 관리자 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/admin/concertadmin.css' %}">
+</head>
+
+<body>
+    <header class="border-b p-4 header-fixed bg-gray-400">
+        <div class="flex justify-between items-center mt-4 mb-4">
+            <h1 class="text-xl font-bold">콘서트 관리자 페이지</h1>
+            <a href="{% url 'admin:privacyConsent' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                개인 정보 동의 관리
+            </a>
+            <a href="{% url 'admin:requestlist' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                대절 요청 목록
+            </a>
+            <a href="{% url 'admin:addconcert' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                콘서트 추가
+            </a>            
+        </div>        
+    </header>
+    <div class="flex justify-center items-center">
+        <div class="bg-white max-w-500px w-full content-spacing">
+            <main class="my-8 py-4">
+                <div class="flex flex-wrap mx-4">
+                    {% for concert_group in concert_data %}
+                        <div class="concert-card bg-white shadow rounded-lg overflow-hidden m-4 relative">
+                            {% if concert_group.concerts %}
+                                <img src="{{ concert_group.concerts.0.image.url }}" alt="{{ concert_group.name }}" class="w-full h-48 object-cover object-top">
+                            {% endif %}
+                            <div class="p-4 bg-white bg-opacity-90 absolute bottom-0 left-0 right-0">
+                                <h2 class="text-lg font-semibold text-gray-800">{{ concert_group.name }}</h2>
+                                {% for concert in concert_group.concerts %}
+                                    <p class="text-sm text-gray-600">{{ concert.date }} - {{ concert.get_status_display }}</p>
+                                {% endfor %}
+                                <div class="mt-2 flex flex-col space-y-2">
+                                    <a href="{% url 'admin:concertInfo' name=concert_group.name %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">대절 관리</a>
+                                    <a href="{% url 'user:concertprereservation' name=concert_group.name %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">사용자 수요조사 페이지로</a>
+                                    <a href="{% url 'user:concertreservation' name=concert_group.name %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">사용자 예약 페이지로</a>
+                                </div>                                
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </main>
+            
+            
+            
+            
+        </div>
+    </div>
+    <footer class="border-t p-4 footer-fixed bg-gray-400">
+        <p class="text-center">HandyBus 관리자 페이지</p>
+    </footer>
+    
+    <style>
+        .concert-card {
+            width: 480px; /* 카드의 너비를 300px로 고정 */
+            height: 720px; /* 카드의 높이를 400px로 고정 */
+        }
+
+        .concert-card img {
+            height: 100%;
+            object-fit: cover; /* 이미지가 카드 크기에 맞게 조정되도록 설정 */
+        }
+    </style>
+        
+</body>
+
+</html>

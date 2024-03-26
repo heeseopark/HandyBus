@@ -1,0 +1,6 @@
+config/__pycache__/
+handybusmvp/__pycache__/
+handybusmvp/migrations/__pycache__/
+handybusrequest/__pycache__
+handybusrequest/migrations/__pycache__
+.env

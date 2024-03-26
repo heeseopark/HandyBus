@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/admin/index.css' %}">
+</head>
+
+<body>
+
+    <header class="border-b p-4 header-fixed bg-gray-400">
+
+        <div class="flex justify-between items-center mt-4 mb-4">
+            <h1 class="text-xl font-bold">{{ name }} 콘서트 관리자 페이지</h1>
+            <a href="{% url 'admin:concertadmin' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded">
+                관리자 페이지 돌아가기
+            </a> 
+        </div>
+
+    </header>
+
+    <div class="flex justify-center items-center min-h-screen bg-gray-100 mt-10 pt-20 py-8 pb-20">
+        <div class="bg-white w-full rounded-lg shadow-md p-6">
+            <main class="max-w-4xl mx-auto my-10">
+                <h1 class="text-3xl font-bold text-center mb-6">{{ name }} 콘서트 정보</h1>
+
+                <!-- 선예약 현황 페이지로 가는 버튼 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-8 flex flex-row items-center justify-center gap-4 py-4">
+                    <div class="mt-4">
+                        <a href="{% url 'admin:prereservationstatus' name %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            수요조사 현황 보기
+                        </a>
+                    </div>                    
+                    <div class="mt-4">
+                        <a href="{% url 'admin:reservationstatus' name %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            예약 현황 보기
+                        </a>
+                    </div>
+                    <div class="mt-4">
+                        <a href="{% url 'admin:leftseat' name %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            잔여석 관리
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- <div> 실예약 현황 페이지로 가는 버튼</div> -->
+
+                {% for info in concert_info %}
+                    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+                        <div class="p-6">
+                            <!-- 상태 변경 form -->
+                            <div class="my-4">
+                                <form action="{% url 'admin:update_concert_status' info.concert.id %}" method="POST" onsubmit="return confirmUpdate();">
+                                    {% csrf_token %}
+                                    <label for="status" class="block mb-2 text-sm font-medium text-gray-900">콘서트 상태 변경:</label>
+                                    <select id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        {% for status, status_display in info.concert.Status.choices %}
+                                            <option value="{{ status }}" {% if info.concert.status == status %} selected {% endif %}>
+                                                {{ status_display }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="mt-4 bg-blue-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                        상태 업데이트
+                                    </button>
+                                </form>
+                            
+                            
+                                
+                            </div>
+
+                            <h2 class="text-xl font-semibold mb-4">{{ info.concert.date }}</h2>
+                                <!-- 상행 집합장소 테이블 -->
+                                <h3 class="text-xl font-semibold mt-8 mb-4">상행 집합장소</h3>
+                                <table class="table-auto w-full mb-6">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-2 text-left bg-gray-200">지역</th>
+                                            <th class="px-4 py-2 text-left bg-gray-300">집합장소명</th>
+                                            <th class="px-4 py-2 text-left bg-gray-200">시간</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for place in info.upward_places %}
+                                            <tr>
+                                                <td class="border px-4 py-2">{{ place.get_region_display }}</td>
+                                                <td class="border px-4 py-2">{{ place.name }}</td>
+                                                <td class="border px-4 py-2">{{ place.time|date:"H:i" }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td class="border px-4 py-2" colspan="3">상행 집합장소가 없습니다.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                <!-- 하행 집합장소 테이블 -->
+                                <h3 class="text-xl font-semibold mt-8 mb-4">하행 하차장소</h3>
+                                <table class="table-auto w-full mb-6">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-2 text-left bg-gray-200">지역</th>
+                                            <th class="px-4 py-2 text-left bg-gray-300">집합장소명</th>
+                                            <th class="px-4 py-2 text-left bg-gray-200">시간</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for place in info.downward_places %}
+                                            <tr>
+                                                <td class="border px-4 py-2">{{ place.get_region_display }}</td>
+                                                <td class="border px-4 py-2">{{ place.name }}</td>
+                                                <td class="border px-4 py-2">{{ place.time|date:"H:i" }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td class="border px-4 py-2" colspan="3">하행 하차장소가 없습니다.</td>
+                                            </tr>
+                                        {% endfor %}
+                                        <td class="border px-4 py-2 bg-gray-400" colspan="3"><a href="{% url 'admin:gatheringPlace' name=name %}">장소 수정/추가하기</a></td>
+
+                                    </tbody>
+                                </table>
+
+                            <table class="table-auto w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left bg-gray-200">지역</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300">선예약 가격</th>
+                                        <th class="px-4 py-2 text-left bg-gray-200">왕복 가격</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300">상행 편도 가격</th>
+                                        <th class="px-4 py-2 text-left bg-gray-200">하행 편도 가격</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for price in info.pricing_info %}
+                                        <tr>
+                                            <td class="border px-4 py-2">{{ price.get_region_display }}</td>
+                                            <td class="border px-4 py-2">{{ price.pre_reserve_price }}원</td>
+                                            <td class="border px-4 py-2">{{ price.round_trip_price }}원</td>
+                                            <td class="border px-4 py-2">{{ price.upbound_price }}원</td>
+                                            <td class="border px-4 py-2">{{ price.downbound_price }}원</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td class="border px-4 py-2" colspan="5">등록된 가격 정보가 없습니다.</td>
+                                        </tr>
+                                    {% endfor %}
+                                    <td class="border px-4 py-2 bg-gray-400" colspan="5"><a href="{% url 'admin:pricing' name=name %}">예약 가격 수정/추가하기</a></td>
+                                </tbody>
+                            </table>
+
+                            <h3 class="text-xl font-semibold mt-8 mb-4">지역별 오픈채팅방 URL</h3>
+                            <table class="table-auto w-full mb-6">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left bg-gray-200">지역</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300">오픈채팅 URL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for chat in info.open_chat_urls %}
+                                    <tr>
+                                        <td class="border px-4 py-2">{{ chat.get_region_display }}</td>
+                                        <td class="border px-4 py-2"><a href="{{ chat.open_chat_url }}" target="_blank">{{ chat.open_chat_url }}</a></td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td class="border px-4 py-2" colspan="2">등록된 오픈채팅방 URL이 없습니다.</td>
+                                    </tr>
+                                    {% endfor %}
+                                    <td class="border px-4 py-2 bg-gray-400" colspan="5"><a href="{% url 'admin:openChatUrl' name=name %}">옵챗 링크 추가하기</a></td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </main>
+            
+            
+        </div>
+    </div>
+    
+    
+    <footer class="border-t p-4 footer-fixed bg-gray-400">
+        <p class="text-center">HandyBus 관리자 페이지</p>
+    </footer>
+
+    <script>
+        function confirmUpdate() {
+            return confirm('정말로 업데이트 하시겠습니까?');
+        }
+        </script>
+
+</body>
+
+</html>

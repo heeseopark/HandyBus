@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/admin/index.css' %}">
+
+    <!-- jQuery를 가장 먼저 로드 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css">
+
+    <!-- DataTables Script -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+
+    <!-- Optional: Moment.js for DateTime sorting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/2.0.2/sorting/datetime-moment.js"></script>
+
+</head>
+
+<body>
+
+    <header class="border-b p-4 header-fixed bg-gray-400">
+
+        <div class="flex justify-between items-center mt-4 mb-4">
+            <h1 class="text-xl font-bold">{{ name }} 콘서트 관리자 페이지</h1>
+            <a href="{% url 'admin:concertadmin' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded">
+                관리자 페이지 돌아가기
+            </a> 
+        </div>
+
+    </header>
+
+    <div class="flex justify-center items-center min-h-screen bg-gray-100 mt-10 pt-20 py-8 pb-20">
+        <div class="bg-white w-full rounded-lg shadow-md p-6">
+            <main class="flex flex-wrap justify-start my-8 pb-4">
+                {% for item in reservations_list %}
+                <div class="min-w-1/3 p-4">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">{{ item.concert.name }} - {{ item.concert.date }}</h2>
+
+                        <!-- 필터 드롭다운 메뉴 -->
+                        <div class="filters mb-4" data-table-id="reservation-table-{{ forloop.counter }}">
+                            <h3 class="py-2">다중 선택은 ctrl이나 shift 누른 채로 클릭</h3>
+                            <div class="flex flex-row items-center justify-start gap-4">
+                                <div>
+                                    <label for="filter-region" class="block text-sm font-medium text-gray-700">지역 필터:</label>
+                                    <select id="filter-region" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" data-column="4">
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="filter-upbound" class="block text-sm font-medium text-gray-700">상행 승차 장소 필터:</label>
+                                    <select id="filter-upbound" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" data-column="5">
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="filter-downbound" class="block text-sm font-medium text-gray-700">하행 하차 장소 필터:</label>
+                                    <select id="filter-downbound" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" data-column="6">
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="filter-travel-type" class="block text-sm font-medium text-gray-700">여행 타입 필터:</label>
+                                    <select id="filter-travel-type" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" data-column="3">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    
+
+                        <!-- 선예약 현황 표 -->
+                        <div class="overflow-x-auto">
+                            <table class="table-auto w-full mb-6" id="reservation-table-{{ forloop.counter }}">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">번호</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">이름</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">전화번호</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">여행 타입</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">지역</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">승차장소</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">하차장소</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">인원수</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">동승자 정보</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">트위터 이미지</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">인스타 이미지</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">예약금</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">예약금 이체 확인</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">잔금 or 전체 금액</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">잔금 or 전체 이체 확인</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">옵챗 입장 확인</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">환불계좌</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">유입 경로</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">환불 여부</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">부총대 선택</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">제출 시간</th>
+                                        <th class="px-4 py-2 text-left whitespace-nowrap">삭제</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% load humanize %}
+                                    {% for reservation in item.reservations %}
+                                    <tr>
+                                        <td class="border px-4 py-2 whitespace-nowrap"></td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.user.name }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.user.phone_number }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.travel_type }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if reservation.gathering_place_up %}
+                                                {{ reservation.gathering_place_up.get_region_display }}
+                                            {% else %}
+                                                {{ reservation.gathering_place_down.get_region_display }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if reservation.gathering_place_up %}
+                                                {{ reservation.gathering_place_up.name }}
+
+                                            {% else %}
+                                            {% endif %}
+                                        </td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if reservation.gathering_place_down %}
+                                                {{ reservation.gathering_place_down.name }}
+
+                                            {% else %}
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.head_count }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.companions_list }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if reservation.twitter_image_url %}
+                                            <div class="relative-position">
+                                                <span class="image-hover" style="cursor: pointer;">Hover to see Twitter image</span>
+                                                <img src="{{ reservation.twitter_image_url }}" alt="Twitter Discount Image" class="discount-image">
+                                            </div>
+                                            {% else %}
+                                            {% endif %}
+                                        </td>
+
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if reservation.instagram_image_url %}
+                                            <div class="relative-position">
+                                                <span class="image-hover" style="cursor: pointer;">Hover to see Instagram image</span>
+                                                <img src="{{ reservation.instagram_image_url }}" alt="Instagram Discount Image" class="discount-image">
+                                            </div>
+                                            {% else %}
+                                            {% endif %}
+                                        </td>
+                                                                            
+                                        {% if reservation.status == 'before_fixed' %}
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.pre_reserve_deposit|intcomma }}원</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if not reservation.has_paid_pre_reserve_price %}
+                                            <form method="post" action="{% url 'admin:confirmreservationpayment' reservation.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="payment_type" value="pre_reserve" />
+                                                <input type="checkbox" name="payment_confirmed" id="pre_payment_confirmed_{{ reservation.id }}" onchange="this.form.submit();" />
+                                                <label for="pre_payment_confirmed_{{ reservation.id }}">선예약금 지불 확인</label>
+                                            </form>
+                                            
+                                            {% else %}
+                                                예
+                                            {% endif %}
+                                        </td>
+                                        {% elif reservation.status == 'after_fixed' %}
+                                            <td colspan="2" class="border px-4 py-2 whitespace-nowrap text-center" >대절 확정 이후 신청</td>
+                                        {% else %}
+                                            <!-- 여기에 다른 상태에 대한 처리를 추가할 수 있습니다. -->
+                                        {% endif %}
+                                    
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.required_deposit|intcomma }}원</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if reservation.status == 'before_fixed' %}
+                                                {% if not reservation.has_paid_pre_reserve_price %}
+                                                가신청 입금 필요
+                                                {% elif reservation.region_status == 'before_confirmation' %}
+                                                대절 확정 필요
+                                                {% elif not reservation.has_paid_reserve_price %}
+                                                <form method="post" action="{% url 'admin:confirmreservationpayment' reservation.id %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="payment_type" value="final_reserve" />
+                                                    <input type="checkbox" name="payment_confirmed" id="final_payment_confirmed_{{ reservation.id }}" onchange="this.form.submit();" />
+                                                    <label for="final_payment_confirmed_{{ reservation.id }}">잔금 지불 확인</label>
+                                                </form>
+                                                {% else %}
+                                                예
+                                                {% endif %}
+                                            {% elif reservation.status == 'after_fixed' %}
+                                                {% if not reservation.has_paid_reserve_price %}
+                                                <form method="post" action="{% url 'admin:confirmreservationpayment' reservation.id %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="payment_type" value="final_reserve" />
+                                                    <input type="checkbox" name="payment_confirmed" id="final_payment_confirmed_{{ reservation.id }}" onchange="this.form.submit();" />
+                                                    <label for="final_payment_confirmed_{{ reservation.id }}">예약금 지불 확인</label>
+                                                </form>
+                                                {% else %}
+                                                예
+                                                {% endif %}
+                                            {% else %}
+                                            수정 필요
+                                            {% endif %}
+                                        
+                                        </td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if not reservation.is_in_open_chat %}
+                                            <form method="post" action="{% url 'admin:confirmopenchat' reservation.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="is_in_open_chat" value="false" />
+                                                <input type="checkbox" name="is_in_open_chat" id="is_in_open_chat_{{ reservation.id }}" value="true" onchange="this.form.submit();" />
+                                                <label for="is_in_open_chat_{{ reservation.id }}">입장 확인</label>
+                                            </form>
+                                            <form action="{% url 'admin:sendopenchatinvitation' reservation.id %}" method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+                                                <button type="submit" class="delete-btn bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 rounded" onsubmit="return confirmSendMessage()">안내 문자 보내기</button>
+                                            </form>
+
+                                            {% else %}
+                                            입장 확인 완료
+                                            {% endif %}
+                                            
+                                        </td>
+
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.refund_account }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.funnel }}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            {% if not reservation.has_refunded %}
+
+                                                <form method="post" action="{% url 'admin:confirmrefund' reservation.id %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="has_refunded" value="false" />
+                                                    <input type="checkbox" name="has_refunded" id="has_refunded_{{ reservation.id }}" value="true" onchange="this.form.submit();"/>
+                                                    <label for="has_refunded_{{ reservation.id }}">환불 완료 확인</label>
+                                                </form>
+
+                                            {% else %}
+                                            환불 처리 완료
+                                            {% endif %}
+
+                                        </td>
+
+                                        
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.is_in_charge|yesno:"예,아니오"}}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">{{ reservation.created_at}}</td>
+                                        <td class="border px-4 py-2 whitespace-nowrap">
+                                            <form action="{% url 'admin:deleteReservation' reservation.id %}" method="post" style="display: inline;" onsubmit="return confirmDelete()">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+                                                <button type="submit" class="delete-btn bg-red-500 hover:bg-red-700 text-white font-bold px-4 rounded">삭제</button>
+                                            </form>
+                                        </td>
+                                        
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="10" class="text-center py-3">예약 정보가 없습니다.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 지역별 상, 하행 인원 표 -->
+                        <div class="overflow-x-auto mt-6">
+                            <h3 class="text-lg font-bold mb-2">지역별 인원 현황</h3>
+                            <table class="table-auto">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left bg-gray-200">지역</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300">상행 인원</th>
+                                        <th class="px-4 py-2 text-left bg-gray-200">하행 인원</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for region_count in item.region_counts_list %}
+                                    <tr>
+                                        <td class="border px-4 py-2">{{ region_count.region_name }}</td>
+                                        <td class="border px-4 py-2">{{ region_count.upbound }}</td>
+                                        <td class="border px-4 py-2">{{ region_count.downbound }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 집합장소별 승,하차 인원 표 -->
+                        <div class="overflow-x-auto mt-6">
+                            <h3 class="text-lg font-bold mb-2">집합장소별 인원 현황</h3>
+                            <table class="table-auto">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left bg-gray-300">집합장소</th>
+                                        <th class="px-4 py-2 text-left bg-gray-200">상행 인원</th>
+                                        <th class="px-4 py-2 text-left bg-gray-300">하행 인원</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for place_count in item.gathering_place_counts_list %}
+                                    <tr>
+                                        <!-- 지역 이름 대신 집합장소 이름을 표시해야 합니다. -->
+                                        <td class="border px-4 py-2">{{ place_count.gathering_place_name }}</td>
+                                        <td class="border px-4 py-2">{{ place_count.upbound }}</td>
+                                        <td class="border px-4 py-2">{{ place_count.downbound }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+            </main>
+            
+            
+            
+        </div>
+    </div>
+    
+    
+    <footer class="border-t p-4 footer-fixed bg-gray-400">
+        <p class="text-center">HandyBus 관리자 페이지</p>
+    </footer>
+
+    <style>
+        div.relative-position {
+            position: relative;
+        }
+
+        .discount-image {
+            display: none;
+            position: absolute;
+            z-index: 1; /* Show on top */
+            max-height: 500px;
+        }
+
+        .image-hover:hover + .discount-image {
+            display: block;
+        }
+
+
+    </style>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // 'reservation-table-'로 시작하는 ID를 가진 모든 테이블에 대해 실행
+            document.querySelectorAll('table[id^="reservation-table-"]').forEach(table => {
+                // 각 테이블에 대한 로컬 카운터 초기화
+                let rowCount = 1;
+
+                table.querySelectorAll("tbody tr").forEach(row => {
+                    // 각 행의 첫 번째 <td> 요소 선택 또는 생성
+                    let firstTd = row.querySelector('td.border.px-4.py-2.whitespace-nowrap');
+                    if (!firstTd) {
+                        firstTd = document.createElement('td');
+                        firstTd.className = 'border px-4 py-2 whitespace-nowrap';
+                        if(row.firstChild) {
+                            row.insertBefore(firstTd, row.firstChild);
+                        } else {
+                            row.appendChild(firstTd);
+                        }
+                    }
+
+                    // 28로 나눈 나머지 + 1 계산하여 카운터 값을 첫 번째 열에 할당
+                    firstTd.textContent = ((rowCount - 1) % 28) + 1;
+                    rowCount++;
+                });
+            });
+        });
+
+        // 예약표 헤더 색상 설정
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const tableHeaders = document.querySelectorAll('table[id^="reservation-table-"] th');
+            tableHeaders.forEach((th, index) => {
+                if (index % 2 === 0) {
+                    th.style.backgroundColor = '#e5e7eb'; // bg-gray-200에 해당하는 색
+                } else {
+                    th.style.backgroundColor = '#cbd5e1'; // bg-gray-300에 해당하는 색
+                }
+            });
+        });
+
+        function confirmDelete() {
+            return confirm('정말로 삭제하시겠습니까?');
+        }
+
+        function confirmPayment() {
+            return confirm('이체 확인을 진행하시겠습니까?');
+        }
+
+        function confirmSendMessage() {
+            return confirm('안내 문자를 보내시겠습니까?');
+        }
+
+        // 예약표 행 색상 설정 (28행마다 색상 구분)
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // 모든 대상 테이블에 대해 실행
+            document.querySelectorAll('table[id^="reservation-table-"]').forEach(table => {
+                // 각 테이블의 모든 행을 선택
+                const rows = table.querySelectorAll('tbody tr');
+                
+                rows.forEach((tr, index) => {
+                    // 28행마다 색상 구분
+                    let colorGroup = Math.floor(index / 28) % 2; // 28행마다 번갈아 가면서 0 또는 1 값을 가짐
+                    
+                    if (colorGroup !== 0) {
+                        // 첫 번째 28행 그룹에 대한 색상 설정
+                        tr.style.backgroundColor = '#d1d5db'; // bg-gray-300에 해당하는 색
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function() {
+            // 글로벌 테이블 객체
+            var tables = {};
+
+            // DataTables 초기화 및 옵션 설정
+            $('table[id^="reservation-table-"]').each(function() {
+                var id = $(this).attr('id');
+                var table = $('#' + id).DataTable({
+                    "paging": false,
+                    "info": false,
+                    "searching": true, // 검색 활성화하여 필터 사용 가능
+                    "order": [], // 초기 정렬 상태 없음
+                    "columnDefs": [
+                        { "searchable": true, "targets": [3, 4, 5, 6] }, // 검색 가능한 열 지정
+                        { "orderable": false, "searchable": false, "targets": [21], "defaultContent": "" } // 삭제 버튼 열 처리 제외
+
+                    ],
+                    "drawCallback": function(settings) {
+                        // 테이블이 다시 그려질 때마다 실행될 로직
+
+                        // 현재 테이블의 모든 행에 대해서 순회하며 처리
+                        var api = this.api();
+                        var rows = api.rows({search: 'applied'}).nodes();
+                        var totalCount = 0; // 시작 번호를 0으로 초기화
+
+                        $(rows).each(function() {
+                            // 7번 인덱스(인원수)의 값을 가져옴
+                            var headCount = parseInt($(this).find('td:eq(7)').text()) || 0;
+                            totalCount += headCount; // 인원수를 누적합
+
+                            // 첫 번째 열에 누적합 설정
+                            var displayNumber = totalCount % 28 === 0 ? 28 : totalCount % 28; // 28으로 나눈 나머지 사용, 0인 경우 28로 설정
+                            $(this).find('td:first').text(displayNumber);
+
+                            // 28행마다 색상 구분
+                            $(this).css('background-color', (Math.floor((totalCount - 1) / 28) % 2 === 0) ? '' : '#d1d5db'); // 짝수번째 그룹에 배경색 적용
+                        });
+
+                        // TODO: 하필 그룹의 가장 마지막 열이 동승인 때문에 28을 넘어가는 경우 그 행을 다음 그룹으로 넘기는 로직 추가하기
+
+                        let namePhoneRegionMap = {};
+                        let nameRegionMap = {};
+
+                        var api = this.api();
+                        var rows = api.rows({search: 'applied'}).nodes();
+
+                        api.rows({search: 'applied'}).every(function() {
+                            var data = this.data();
+                            const name = data[1]; // 이름 칼럼 인덱스
+                            const phone = data[2]; // 전화번호 칼럼 인덱스
+                            const region = data[4]; // 지역 칼럼 인덱스
+                            const row = $(this.node());
+                            const namePhoneRegionKey = `${name}|${phone}|${region}`;
+
+                            // 이름, 전화번호, 지역 조합에 대한 중복 추적
+                            if (!namePhoneRegionMap[namePhoneRegionKey]) {
+                                namePhoneRegionMap[namePhoneRegionKey] = [];
+                            }
+                            namePhoneRegionMap[namePhoneRegionKey].push(row);
+
+                            // 이름과 지역에 대한 중복 추적
+                            const nameRegionKey = `${name}|${region}`;
+                            if (!nameRegionMap[nameRegionKey]) {
+                                nameRegionMap[nameRegionKey] = [];
+                            }
+                            nameRegionMap[nameRegionKey].push(row);
+                        });
+
+                        // 이름, 전화번호, 지역이 모두 같은 행 처리
+                        Object.values(namePhoneRegionMap).forEach(rows => {
+                            if (rows.length > 1) { // 중복되는 경우
+                                rows.forEach(row => row.css('background-color', "#fecaca")); // 빨간색 적용
+                            }
+                        });
+
+                        // 이름과 지역만 같은 행 처리
+                        Object.values(nameRegionMap).forEach(rows => {
+                            if (rows.length > 1) {
+                                rows.forEach(row => {
+                                    const cell = row.find('td').eq(1); // 이름 칼럼
+                                    const regionCell = row.find('td').eq(4); // 지역 칼럼
+                                    const nameRegionKey = `${cell.text()}|${regionCell.text()}`;
+                                    // 이름, 전화번호, 지역 조합이 유일한 경우, 즉 이전에 빨간색으로 색칠되지 않은 경우
+                                    if (namePhoneRegionMap[nameRegionKey] && namePhoneRegionMap[nameRegionKey].length === 1) {
+                                        row.css('background-color', "#fef08a"); // 노란색 적용
+                                    }
+                                });
+                            }
+                        });
+
+                        // 환불 처리 완료인 경우 가운데 줄 표시
+                        api.rows({search: 'applied'}).every(function() {
+                            var data = this.data();
+                            var row = $(this.node());
+
+                            // '환불 처리 완료'인 경우 행 전체에 가운데 줄 표시
+                            if (data[18] === '환불 처리 완료') {
+                                row.css('text-decoration', 'line-through');
+                            }
+                        });
+
+                    }
+                });
+
+                tables[id] = table;
+            });
+
+            // 각 필터 드롭다운에 대한 이벤트 리스너 설정
+            $('.filters select[multiple]').on('change', function() {
+                var filterId = $(this).attr('id');
+                var column = $(this).data('column');
+                var tableId = $(this).closest('.filters').data('table-id');
+                var searchValues = $(this).val(); // 배열로 선택된 모든 값 가져오기
+
+                if (searchValues && searchValues.length > 0) {
+                    // 선택된 모든 값을 OR 조건으로 연결하여 검색
+                    var regex = '^' + searchValues.join('$|^') + '$';
+                    tables[tableId].column(column).search(regex, true, false).draw();
+                } else {
+                    // 선택된 값이 없는 경우, 모든 결과 표시
+                    tables[tableId].column(column).search("", true, false).draw();
+                }
+            });
+
+            // 동적으로 필터 선택지 생성
+            $('.filters').each(function() {
+                var tableId = $(this).data('table-id');
+                var tableData = tables[tableId].rows().data();
+
+                tableData.each(function(value, index) {
+                    var region = value[4];
+                    var upbound = value[5];
+                    var downbound = value[6];
+                    var travelType = value[3];
+
+                    addToFilterOptions("#filter-region", region, tableId);
+                    addToFilterOptions("#filter-upbound", upbound, tableId);
+                    addToFilterOptions("#filter-downbound", downbound, tableId);
+                    addToFilterOptions("#filter-travel-type", travelType, tableId);
+                });
+            });
+
+            // 필터 옵션 추가 함수
+            function addToFilterOptions(selector, value, tableId) {
+                var options = $(`div[data-table-id='${tableId}'] ${selector} option`);
+                var exists = false;
+
+                options.each(function() {
+                    if (this.value === value) {
+                        exists = true;
+                        return false; // 종료
+                    }
+                });
+
+                if (!exists && value.trim() !== "") {
+                    $(`div[data-table-id='${tableId}'] ${selector}`).append(new Option(value, value));
+                }
+            }
+        });
+
+        // document.addEventListener("DOMContentLoaded", function() {
+        // document.querySelectorAll('table[id^="reservation-table-"]').forEach(table => {
+        //     let namePhoneMap = {};
+        //     let nameMap = {};
+        
+        //     table.querySelectorAll("tbody tr").forEach(row => {
+        //     const name = row.cells[1].textContent.trim();
+        //     const phone = row.cells[2].textContent.trim();
+        //     const namePhoneKey = `${name}|${phone}`;
+        
+        //     // 이름과 전화번호 조합에 대한 중복 추적
+        //     if (!namePhoneMap[namePhoneKey]) {
+        //         namePhoneMap[namePhoneKey] = [];
+        //     }
+        //     namePhoneMap[namePhoneKey].push(row);
+        
+        //     // 이름에 대한 중복 추적
+        //     if (!nameMap[name]) {
+        //         nameMap[name] = [];
+        //     }
+        //     nameMap[name].push(row);
+        //     });
+        
+        //     // 이름과 전화번호가 모두 같은 행 처리
+        //     Object.values(namePhoneMap).forEach(rows => {
+        //     if (rows.length > 1) { // 중복되는 경우
+        //         rows.forEach(row => row.style.backgroundColor = "#fecaca"); // 빨간색 적용
+        //     }
+        //     });
+        
+        //     // 이름만 같은 행 처리
+        //     Object.values(nameMap).forEach(rows => {
+        //     if (rows.length > 1) {
+        //         rows.forEach(row => {
+        //         const phone = row.cells[2].textContent.trim();
+        //         const namePhoneKey = `${row.cells[1].textContent.trim()}|${phone}`;
+        //         // 이름과 전화번호 조합이 유일한 경우, 즉 이전에 빨간색으로 색칠되지 않은 경우
+        //         if (namePhoneMap[namePhoneKey].length === 1) {
+        //             row.style.backgroundColor = "#fef08a"; // 노란색 적용
+        //         }
+        //         });
+        //     }
+        //     });
+        // });
+        // });
+
+    </script>
+    
+    
+    
+</body>
+
+</html>

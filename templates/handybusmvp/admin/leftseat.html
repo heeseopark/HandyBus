@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }} 잔여석 관리 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+
+
+    <style>
+        @font-face {
+            font-family: 'Pretendard-Bold';
+            src: url('{% static "font/Pretendard-Bold.woff" %}') format('woff');
+        }
+        
+        @font-face {
+            font-family: 'Pretendard-Regular';
+            src: url('{% static "font/Pretendard-Regular.woff" %}') format('woff');
+        }
+    
+        .custom-font-bold {
+            font-family: 'Pretendard-Bold';
+        }
+    
+        .custom-font-regular {
+            font-family: 'Pretendard-Regular';
+        }
+    
+        #capture {
+            background-image: url('{% static "handybusmvp/leftseat_background.jpg" %}');
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center center;
+            width: 1000px;
+            height: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 20px;   
+        }
+    </style>
+    
+</head>
+<body>
+<header class="border-b p-4 header-fixed bg-gray-400">
+    <div class="flex justify-between items-center mt-4 mb-4">
+        <h1 class="text-xl font-bold">{{ name }} 잔여석 관리 페이지</h1>
+        <a href="{% url 'admin:concertadmin' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded">
+            관리자 페이지 돌아가기
+        </a>
+    </div>
+</header>
+
+<div class="flex justify-center items-center">
+    <div class="bg-white max-w-500px content-spacing">
+        <main class="my-8 p-4">
+            <div class="flex flex-wrap justify-around">
+
+            {% if grouped_regions %}
+                {% for concert_info, groups in grouped_regions.items %}
+                    <section>
+                        <h2 class="mt-6 mb-2">{{ concert_info }}</h2>
+                        <table class="table-auto mb-6">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2 text-left bg-gray-200">Stopover Group</th>
+                                    <th class="px-4 py-2 text-left bg-gray-200">Group Name/Region</th>
+                                    <th class="px-4 py-2 text-left bg-gray-200">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for group_name, region_infos in groups.items %}
+                                    {% for region_info in region_infos %}
+                                        <tr>
+                                            {% if forloop.first %}
+                                                <td class="border px-4 py-2" rowspan="{{ region_infos|length }}">{{ group_name }}</td>
+                                            {% endif %}
+                                            <td class="border px-4 py-2">{{ region_info.get_region_display }}</td>
+                                            <td class="border px-4 py-2">{{ region_info.get_status_display }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% empty %}
+                                    <tr>
+                                        <td class="border px-4 py-2" colspan="3">No regions found for this group.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        
+                    </section>
+                {% endfor %}
+            {% else %}
+                <p>No concert information available.</p>
+            {% endif %}
+            </div>
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="flex flex-wrap justify-around">
+                {% for concert_info, groups in grouped_regions.items %}
+                    <div class="p-4 border rounded-lg shadow mx-4">
+                        <h3 class="text-lg font-semibold mb-2">{{ concert_info }}</h3>
+                        {% for group_name, region_infos in groups.items %}
+                            <!-- 여기서 region_infos 중 하나의 예시로 status 접근을 가정합니다. 실제 구현에는 이에 맞게 조정이 필요할 수 있습니다. -->
+                            {% if region_infos.0.status == 'before_confirmation' or region_infos.0.status == 'after_confirmation' %}
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <label for="seat_{{ region_infos.0.concert.id }}_{{ group_name }}" class="flex-none">{{ group_name }} 좌석 수:</label>
+                                    <input type="number" id="seat_{{ region_infos.0.concert.id }}_{{ group_name }}" name="region_seats_{{ region_infos.0.concert.id }}_{{ group_name }}" class="flex-grow p-2 border rounded" required>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">남은 좌석 계산</button>
+            </form>
+            
+            {% if reservation_details and concerts %}
+            <div class="content-spacing mt-8">
+                <div class="relative overflow-hidden" style="width: 100%; display: flex; justify-content: center;">
+                    {% load static %}
+                    <div id="capture">
+                        <div class="custom-font-bold text-center" style="margin-top: 42px; height: 240px; width: 1000px; font-size: 48px; display: flex; justify-content: center; align-items: center; text-shadow: 4px 4px 8px rgba(255, 255, 255, 0.5);">
+                            {{ concerts.0.idol }} 대절 잔여석 현황
+                        </div>                        
+                        <table class="custom-font-regular mx-16 shadow-lg bg-white text-center" style="height: 500px; width:700px; margin-top: 25px; font-size: 24px;">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-gray-600">날짜</th>
+                                    <th class="px-4 py-2 text-gray-600">지역</th>
+                                    <th class="px-4 py-2 text-gray-600">잔여석</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                {% for concert, regions in reservation_details.items %}
+                                    {% for region, details in regions.items %}
+                                        <tr class="border">
+                                            <td class="px-4 py-2">{{ concert.date|date:"n/j" }}({{ concert.date|date:"D"|slice:":1" }})</td>
+                                            <td class="px-4 py-2">{{ region }}</td>
+                                            <td class="px-4 py-2">
+                                                {% if details.upbound_leftseat < details.downbound_leftseat %}
+                                                    {{ details.upbound_leftseat }}석
+                                                {% else %}
+                                                    {{ details.downbound_leftseat }}석
+                                                {% endif %}
+                                            </td>
+                                            
+                                        </tr>
+                                    {% endfor %}
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4">No reservation details available.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- TODO: 텍스트 아래로 쏠리는 문제 해결하기 -->
+            <button onclick="captureHTML()" class="mt-8 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Save Table as Image</button>
+            <div class="mt-8 bg-gray-100 p-4 rounded-lg shadow">
+                <p class="text-lg font-semibold mb-2">이미지 저장하는 거가 아직 다 안 끝나서 야매로 저장하는 법 써둘게요:</p>
+                <ol class="list-decimal list-inside space-y-2">
+                    <li>크롬에서 <kbd class="px-2 py-1 bg-gray-200 rounded">F12</kbd> 눌러서 개발자 툴 열기</li>
+                    <li>div 토글 열어서 이미지가 있는 div 찾기 (div id가 <code class="px-2 py-1 bg-gray-200 rounded">capture</code>인 거 찾으면 됩니다.)</li>
+                    <li>오른쪽 클릭 눌러서 'Capture node screenshot' 클릭</li>
+                </ol>
+            </div>
+            
+            
+        
+
+
+            
+            {% else %}
+            <p>POST 메소드로 전달된 좌석 정보가 없습니다. 경유 지역별 잔여 좌석 정보를 확인하려면, 관련 정보를 포함하여 요청을 다시 제출해주세요.</p>
+            {% endif %}
+
+        </main>
+        
+        
+        
+    
+    </div>
+</div>
+
+<footer class="border-t p-4 footer-fixed bg-gray-400">
+    <p class="text-center">HandyBus 관리자 페이지</p>
+</footer>
+
+<script>
+    function confirmSubmit() {
+        return confirm('정말로 변동하시겠습니까?');
+    }
+
+    function captureHTML() {
+        // Capture the HTML content of the div with id 'capture'
+        html2canvas(document.querySelector('#capture'), {useCORS: true}).then(canvas => {
+            // Convert the canvas to a blob
+            canvas.toBlob(blob => {
+                // Create a URL for the blob object
+                const url = URL.createObjectURL(blob);
+                // Create a link element for downloading
+                const link = document.createElement('a');
+                link.download = 'captured-image.png'; // Name of the file to be downloaded
+                link.href = url;
+                document.body.appendChild(link); // Append link to the body
+                link.click(); // Programmatically click the link to trigger the download
+                document.body.removeChild(link); // Remove the link from the body
+                URL.revokeObjectURL(url); // Clean up the URL object
+            }, 'image/png');
+        });
+    }
+
+
+
+    </script>
+
+    <style>
+
+        ul.custom-font-regular li {
+            margin-bottom: 10px; /* Adjust the spacing as needed */
+        }
+    </style>
+    
+</body>
+</html>

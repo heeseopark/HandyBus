@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개인정보 동의 관리 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/admin/index.css' %}">
+</head>
+
+<body>
+
+    <header class="border-b p-4 header-fixed bg-gray-400">
+
+        <div class="flex justify-between items-center mt-4 mb-4">
+            <h1 class="text-xl font-bold">개인정보 동의 관리 페이지</h1>
+        </div>
+
+    </header>
+
+    <div class="flex justify-center items-center">
+        <div class="bg-white max-w-500px w-full content-spacing">
+
+            <main class="my-8 p-4">
+                <form method="post" class="mb-6">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="version" class="block text-gray-700 text-sm font-bold mb-2">버전:</label>
+                        <input type="text" id="version" name="version" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-6">
+                        <label for="content" class="block text-gray-700 text-sm font-bold mb-2">내용:</label>
+                        <textarea id="content" name="content" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32 resize-none"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">추가</button>
+                    </div>
+                </form>
+            
+                <table class="table-auto w-full">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 w-40">버전</th>
+                            <th class="px-4 py-2 bg-gray-300">내용</th>
+                            <th class="px-4 py-2 w-60">생성 시간</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consent in privacyConsents %}
+                        <tr>
+                            <td class="border px-4 py-2">{{ consent.version }}</td>
+                            <td class="border px-4 py-2">{{ consent.content|linebreaks }}</td>
+                            <td class="border px-4 py-2">{{ consent.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </main>
+
+        </div>
+    </div>
+    
+    <footer class="border-t p-4 footer-fixed bg-gray-400">
+        <p class="text-center">HandyBus 관리자 페이지</p>
+    </footer>
+
+</body>
+
+</html>

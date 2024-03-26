@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>집합장소 관리 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/admin/index.css' %}">
+</head>
+<body>
+    <header class="border-b p-4 header-fixed bg-gray-400">
+        <div class="flex justify-between items-center mt-4 mb-4">
+            <h1 class="text-xl font-bold">{{ name }} 집합장소 관리 페이지</h1>
+            <a href="{% url 'admin:concertadmin' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded">
+                관리자 페이지 돌아가기
+            </a>    
+        </div>
+    </header>
+
+    <div class="flex justify-center items-center">
+        <div class="bg-white max-w-500px w-full content-spacing">
+            <main class="my-8 p-4">
+                <div class="flex flex-row flex-wrap justify-start items-start">
+                    {% for concert, upward_places, downward_places in concert_places %}
+                    <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2 card-container">
+                        <div class="bg-white shadow-md rounded p-4">
+                                <h2 class="text-lg font-semibold">{{ concert.name }} - {{ concert.date }}</h2>
+                                    <!-- 상행 집합장소 테이블 -->
+                                    <h3 class="text-xl font-semibold mt-8 mb-4">상행 집합장소</h3>
+                                    <table class="table-auto w-full mt-4">
+                                        <thead>
+                                            <tr>
+                                                <th class="border px-4 py-2 bg-gray-200">지역</th>
+                                                <th class="border px-4 py-2 bg-gray-300">집합장소명</th>
+                                                <th class="border px-4 py-2 bg-gray-200">위치</th>
+                                                <th class="border px-4 py-2 bg-gray-300">시간</th>
+                                                <th class="border px-4 py-2 bg-gray-200">정보 수정/삭제</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for place in upward_places %}
+                                            <tr id="place_{{ place.id }}">
+                                                <td class="border px-4 py-2" id="region_{{ place.id }}">{{ place.get_region_display }}</td>
+                                                <td class="border px-4 py-2" id="name_{{ place.id }}">{{ place.name }}</td>
+                                                <td class="border px-4 py-2" id="location_{{ place.id }}">{{ place.location }}</td>
+                                                <td class="border px-4 py-2" id="time_{{ place.id }}">{{ place.time }}</td>
+                                                <td class="border px-4 py-2">
+                                                    <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded" onclick="editPlace({{ place.id }})">수정</button>
+                                                    <form action="{% url 'admin:deleteGatheringPlace' place.id %}" method="post" style="display:inline;">
+                                                        {% csrf_token %}
+                                                        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded" type="submit">삭제</button>
+                                                    </form>
+                                                </td>                                                
+                                            </tr>
+                                            {% empty %}
+                                                <tr>
+                                                    <td class="border px-4 py-2" colspan="5">상행 집합장소가 없습니다.</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    <!-- 하행 집합장소 테이블 -->
+                                    <h3 class="text-xl font-semibold mt-8 mb-4">하행 하차장소</h3>
+                                    <table class="table-auto w-full mt-4">
+                                        <thead>
+                                            <tr>
+                                                <th class="border px-4 py-2 bg-gray-200">지역</th>
+                                                <th class="border px-4 py-2 bg-gray-300">하차장소명</th>
+                                                <th class="border px-4 py-2 bg-gray-200">위치</th>
+                                                <th class="border px-4 py-2 bg-gray-300">시간</th>
+                                                <th class="border px-4 py-2 bg-gray-200">정보 수정/삭제</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for place in downward_places %}
+                                            <tr id="place_{{ place.id }}">
+                                                <td class="border px-4 py-2" id="region_{{ place.id }}">{{ place.get_region_display }}</td>
+                                                <td class="border px-4 py-2" id="name_{{ place.id }}">{{ place.name }}</td>
+                                                <td class="border px-4 py-2" id="location_{{ place.id }}">{{ place.location }}</td>
+                                                <td class="border px-4 py-2" id="time_{{ place.id }}">{{ place.time }}</td>
+                                                <td class="border px-4 py-2">
+                                                    <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded" onclick="editPlace({{ place.id }})">수정</button>
+                                                    <form action="{% url 'admin:deleteGatheringPlace' place.id %}" method="post" style="display:inline;">
+                                                        {% csrf_token %}
+                                                        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded" type="submit">삭제</button>
+                                                    </form>
+                                                </td>                                                
+                                            </tr>
+                                            {% empty %}
+                                                <tr>
+                                                    <td class="border px-4 py-2" colspan="5">하행 집합장소가 없습니다.</td>
+                                                </tr>
+                                            {% endfor %}
+                                    </table>
+
+    
+                                <form action="{% url 'admin:gatheringPlace' concert.name %}" method="post" class="mt-4">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="concert_id" value="{{ concert.id }}">
+                                    <select name="direction" required class="border p-2 mr-2 mb-2">
+                                        <option value="" disabled selected>방향 선택</option>
+                                        {% for code, name in directions %}
+                                        <option value="{{ code }}">{{ name }}</option>
+                                        {% endfor %}
+                                    </select>                                
+                                    <select name="region" required class="border p-2 mr-2 mb-2">
+                                        <option value="" disabled selected>지역 선택</option>
+                                        {% for code, name in regions %}
+                                        <option value="{{ code }}">{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="text" name="name" placeholder="집합장소명" required class="border p-2 mr-2 mb-2">
+                                    <input type="text" name="location" placeholder="위치" class="border p-2 mr-2 mb-2">
+                                    <input type="time" name="time" class="border p-2 mr-2 mb-2">
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">추가하기</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    
+    
+    
+    <footer class="border-t p-4 footer-fixed bg-gray-400">
+        <p class="text-center">HandyBus 관리자 페이지</p>
+    </footer>
+
+    <script>
+        // TODO: 수정 시 시간 비워도 수정할 수 있게 하기
+        function editPlace(placeId) {
+                // 셀 선택
+                var nameCell = document.getElementById('name_' + placeId);
+                var locationCell = document.getElementById('location_' + placeId);
+                var timeCell = document.getElementById('time_' + placeId);
+                var actionCell = document.querySelector(`#place_${placeId} td:last-child`); // 수정 및 삭제 버튼을 포함하는 셀
+
+                // 현재 셀의 텍스트 값을 가져옵니다.
+                var currentName = nameCell.innerText.trim();
+                var currentLocation = locationCell.innerText.trim();
+                var currentTime = timeCell.innerText.trim();
+
+                // 각 셀을 텍스트 입력 영역으로 변경합니다.
+                nameCell.innerHTML = `<input type="text" name="name" value="${currentName}" style="width: 100%;">`;
+                locationCell.innerHTML = `<textarea name="location" rows="2" style="width: 100%;">${currentLocation}</textarea>`;
+                timeCell.innerHTML = `<input type="time" name="time" value="${currentTime}" style="width: 100%;">`;
+
+                // 기존의 수정 및 삭제 버튼을 숨기고, 저장 버튼을 표시합니다.
+                actionCell.innerHTML = `<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 rounded" onclick="savePlace(${placeId})">저장</button>`;
+            }
+
+            function savePlace(placeId) {
+                // 폼에 모든 입력 필드 추가 전 유효성 검사
+                var row = document.getElementById('place_' + placeId);
+                var isValid = true; // 폼의 유효성 상태
+
+                // 입력 필드가 비어 있는지 확인
+                row.querySelectorAll('input[required], textarea[required]').forEach(function(input) {
+                    if (!input.value.trim()) {
+                        alert('모든 필드를 채워주세요.'); // 경고 메시지 표시
+                        input.focus(); // 비어 있는 입력 필드에 포커스
+                        isValid = false; // 유효성 상태를 false로 설정
+                        return; // 반복 중단
+                    }
+                });
+
+                if (!isValid) {
+                    return; // 유효하지 않으면 폼 제출 중단
+                }
+
+                // 폼 생성 및 서버에 제출
+                var form = document.createElement('form');
+                form.setAttribute('method', 'post');
+                form.setAttribute('action', '{% url "admin:editGatheringPlace" place_id='0' %}'.replace('0', placeId));
+                // 폼에 모든 입력 필드 추가
+                row.querySelectorAll('input, textarea').forEach(function(input) {
+                    var inputClone = document.createElement(input.tagName.toLowerCase());
+                    inputClone.type = input.type;
+                    inputClone.name = input.name;
+                    inputClone.value = input.value;
+                    form.appendChild(inputClone);
+                });
+
+                // CSRF 토큰 추가
+                var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').cloneNode(true);
+                form.appendChild(csrfToken);
+
+                document.body.appendChild(form);
+                form.submit(); // 유효성 검사를 통과하면 폼 제출
+            }
+
+
+
+        function convertTo24Hour(timeStr) {
+            const [period, time] = timeStr.split(' ');
+            let [hours, minutes] = time.split(':');
+
+            hours = parseInt(hours);
+            if (period === '오후' && hours < 12) {
+                hours += 12;
+            }
+            if (period === '오전' && hours === 12) {
+                hours = 0;
+            }
+
+            // 시간을 두 자리 숫자로 포매팅
+            hours = ('0' + hours).slice(-2);
+            return `${hours}:${minutes}`;
+        }
+
+        </script>
+        
+        <style>
+
+.card-container {
+    width: auto; /* 너비를 자동 조절 */
+    max-width: 100%; /* 최대 너비를 부모 요소의 100%로 설정 */
+}
+
+        </style>
+        
+</body>
+</html>

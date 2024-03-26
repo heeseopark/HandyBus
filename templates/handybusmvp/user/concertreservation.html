@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ concertname }} 대절 신청 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/index.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'handybusmvp/user/concertreservation.css' %}">
+</head>
+
+<body>
+    <div class="mobile-container shadow-md rounded items-center" style="background-image: url('{{ concert_image_url }}'); background-size: cover; background-position: top; opacity: 0.8;">
+        <header class="header-fixed shadow-md">
+            <div class="flex justify-between items-center">
+                <div class="logo-container flex-1 flex justify-center items-center">
+                    <img src="{% static 'logo.png' %}" alt="로고" class="logo p-20">
+                </div>
+
+                <div id="hamburger" class="hamburger mr-8">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <div id="nav-menu" class="nav-menu flex flex-col space-y-2">
+                <!-- Navigation links go here -->
+                <a href="{% url 'user:concertprereservationlist' %}" class="block bg-gray-500 hover:bg-gray-700 text-white font-bold py-4 px-4 mx-2 rounded text-center mt-8">
+                    수요조사 중인 대절
+                </a>
+                <a href="{% url 'user:concertreservationlist' %}" class="block bg-gray-500 hover:bg-gray-700 text-white font-bold py-4 px-4 mx-2 rounded text-center">
+                    예약 모집 중인 대절
+                </a>
+            </div>
+
+        </header>
+
+
+
+        <div class="flex justify-center items-center pt-8">
+            <div class="w-full content-spacing mx-4">
+                <main class="mt-24 my-8 pb-4">
+
+                    <h1 class="text-3xl bg-white bg-opacity-80 rounded p-2"> <strong>{{ concertname }} 대절 신청 페이지</strong> </h1>
+
+                    <div id="register-announcement-container" class="mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80">
+                        <p class="font-bold text-lg">✔️ 신청 과정</p>
+                        <p class="font-bold text-lg">신청서 작성 → 오픈채팅방/입금계좌 안내 📢문자메시지📢 발송 → 예약금 입금 → 신청 완료✅</p>
+                        
+
+                    </div>
+
+                    <div id="announcement-container" class="mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80">
+                        <div class="mb-2"><strong>✔️ 대절 정보</strong></div>
+                        {% for date, regions in riding_and_status_info.items %}
+                        <div class="cursor-pointer flex items-center py-2" onclick="toggleContent('{{ date }}')">
+                            <span id="icon-{{ date }}" class="inline-block transform transition-transform duration-300 ease-out">&#9654;</span>
+                            <span class="ml-2">{{ date }}일 탑승 가능 지역 및 대절 현황</span>
+                        </div>
+                        <div id="content-{{ date }}" class="toggle-content bg-gray-200 mt-2 p-4 hidden">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="w-2/7 px-3 py-3 text-left font-medium uppercase tracking-wider">지역 그룹</th>
+                                        <th scope="col" class="w-3/7 px-3 py-3 text-left font-medium uppercase tracking-wider whitespace-normal">노선</th>
+                                        <th scope="col" class="w-2/7 px-3 py-3 text-left font-medium uppercase tracking-wider">대절 현황</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    {% for region_group, details in regions.items %}
+                                    {% with details.reservation_status.values as statuses %}
+                                    {% if "무산" not in statuses %}
+                                    <tr>
+                                        <td class="px-3 py-4 text-sm whitespace-normal">{{ region_group }}</td>
+                                        <td class="px-3 py-4 text-sm whitespace-normal">
+                                            {% for place in details.time_defined %}
+                                            {{ place.name }} ({{ place.time }}){% if not forloop.last %} → <br>{% endif %}
+                                            {% endfor %}
+                                            {% if details.time_undefined|length > 0 and details.time_defined|length > 0 %}
+                                                <br><br>
+                                            {% endif %}
+                                            {% if details.time_undefined|length > 0 %}
+                                                시간 미정 장소:<br>
+                                            {% endif %}
+                                            {% for place in details.time_undefined %}
+                                                {{ place.name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        
+                                        </td>
+                                        <td class="px-3 py-4 text-sm whitespace-normal">
+                                            {% for region, status in details.reservation_status.items %}
+                                            {% if details.reservation_status|length > 1 %}
+                                                {{ region }}: 
+                                                {% if status == '대절 확정 전' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 opacity-80">대절 확정 전 (신청 가능)</span>
+                                                {% elif status == '대절 확정 후' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-200 opacity-80">대절 확정 (신청 가능)</span>
+                                                {% elif status == '마감' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 opacity-80">마감 (신청 불가능)</span>
+                                                {% else %}
+                                                    {{ status }}
+                                                {% endif %}
+                                            {% else %}
+                                                {% if status == '대절 확정 전' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 opacity-80">대절 확정 전 (신청 가능)</span>
+                                                {% elif status == '대절 확정 후' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-200 opacity-80">대절 확정 (신청 가능)</span>
+                                                {% elif status == '마감' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 opacity-80">마감 (신청 불가능)</span>
+                                                {% else %}
+                                                    {{ status }}
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if not forloop.last %}<br> {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        
+                                    </tr>
+                                    {% endif %}
+                                    {% endwith %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                        
+                        {% endfor %}
+                        <br>
+                        <ul>
+                            <li class="mb-2"><strong>✔️ 도착지</strong></li>
+                            <li class="mb-2">{{ concertplace }}</li>
+                            <br>
+                            <li class="mb-2"><strong>✔️ 소요 시간 (예상)</strong></li>
+                            <li class="mb-2"><strong>청주/세종/천안</strong> 약 2.5시간</li>
+                            <li class="mb-2"><strong>대전</strong> 약 3.0시간</li>
+                            <li class="mb-2"><strong>대구</strong> 약 4.0시간</li>
+                            <li class="mb-2"><strong>창원</strong> 약 5.0시간</li>
+                            <li class="mb-2"><strong>부산</strong> 약 5.0시간</li>
+                            <li class="mb-2">*부산-창원 경유 시 약 6.0시간</li>
+                        </ul>
+                    </div>
+                    
+                    
+                    
+                    
+
+                    <div id="pricing-container" class="mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80 overflow-hidden sm:rounded-lg mb-4">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100 bg-opacity-80">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider whitespace-nowrap">
+                                        지역
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider whitespace-nowrap">
+                                        왕복 가격
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider whitespace-nowrap">
+                                        상행 가격
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider whitespace-nowrap">
+                                        하행 가격
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white bg-opacity-80 divide-y divide-gray-200">
+                                {% load humanize %}
+                                {% for pricing in pricings %}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ pricing.get_region_display }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ pricing.round_trip_price|intcomma }}원
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ pricing.upbound_price|intcomma }}원
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ pricing.downbound_price|intcomma }}원
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <p class = "my-4"><b>SNS 이벤트 참여 시 1,000원 할인!</b></p>
+                        <p class = "my-4"><b>입금 계좌 : 카카오뱅크 7979-78-00425 ㅈㅈㅇ</b></p>
+                        <p class = "my-4"><b>위 금액은 예약금이 포함된 총 금액입니다!</b></p>
+                        <p class = "my-4"><b>대절 확정 후 안내를 따라 전체 금액에서 예약금을 제외한 나머지 금액만을 입금하시면 됩니다.</b></p>
+                    </div>
+                    
+                    <div id="pre-reserve-announcement-container" class="mt-8 border border-gray-300 rounded-lg p-4 mb-4 bg-white bg-opacity-80">
+                        <p><b>💙 가신청 제도</b></p>
+                        <br>
+                        <p class="mb-2"><b>예약금: 10,000원 (전 지역 동일)</b></p>
+                        <ul>
+                            <li class="mb-2"><b>대절 확정 시 - 잔금 입금 / 무산 시 - 당일 전액 환불</b></li>
+                            <li class="mb-2">대절 확정되었으나 탑승 취소 / 노쇼 시 예약금 환불 불가</li>
+                            <li class="mb-2">양일 이용 시 각각 10,000원 / 동반 이용 시 동반인원 수 * 10,000원 입니다!</li>
+                        </ul>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="mb-4">
+                        {% csrf_token %}
+
+                        <!-- 해당 콘서트 날짜 선택 -->
+                        <div class="date-selection mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80">
+                            <fieldset>
+                                <legend class="text-lg font-bold mb-2">대절 날짜 선택:</legend>
+                                <div id="dates"></div>
+                            </fieldset>
+                        </div>
+
+                        <!-- 여행 타입 선택 (초기에는 숨김) -->
+                        <div id="trip-type-container" class="mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80"
+                            style="display: none;">
+                            <fieldset>
+                                <legend class="text-lg font-bold mb-2">왕복 여부 선택:</legend>
+                                <div class="trip-type">
+                                    <label class="flex items-center mb-2">
+                                        <input type="radio" id="round-trip" name="trip_type" value="round_trip"
+                                            class="form-radio h-5 w-5 text-gray-600">
+                                        <span class="ml-2 text-gray-700">왕복</span>
+                                    </label>
+                                    <label class="flex items-center mb-2">
+                                        <input type="radio" id="one-way-to" name="trip_type" value="one_way_to"
+                                            class="form-radio h-5 w-5 text-gray-600">
+                                        <span class="ml-2 text-gray-700">상행</span>
+                                    </label>
+                                    <label class="flex items-center mb-2">
+                                        <input type="radio" id="one-way-back" name="trip_type" value="one_way_back"
+                                            class="form-radio h-5 w-5 text-gray-600">
+                                        <span class="ml-2 text-gray-700">하행</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <!-- 상행 승차 지역 및 장소 선택 (초기에는 숨김) -->
+                        <div id="upward-region-places-container" class="mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80" style="display: none;">
+                            <fieldset>
+                                <legend class="text-lg font-bold mb-2">상행 승차 지역 및 장소 선택:</legend>
+                                <div id="upward_regions_places"></div>
+                            </fieldset>
+                        </div>
+
+                        <!-- 하행 하차 지역 및 장소 선택 (초기에는 숨김) -->
+                        <div id="downward-region-places-container" class="mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80" style="display: none;">
+                            <fieldset>
+                                <legend class="text-lg font-bold mb-2">하행 하차 지역 및 장소 선택:</legend>
+                                <div id="downward_regions_places"></div>
+                            </fieldset>
+                        </div>
+
+
+
+                        <div>
+
+                            <!-- 원하는 지역이나 장소가 없으신가요? -> 대절 요청 게시판 -->
+
+                        </div>
+
+
+                        <!-- 예약자 정보 기입란 -->
+                        <div id="user-info-container" class="user-info mt-8 border border-gray-300 rounded-lg p-4 bg-white bg-opacity-80"
+                            style="display: none;">
+                            <p class="my-4"><b>트위터 신청폼 RT 및 인스타 @handy.bus 계정 팔로우 시 1,000원 할인! 😊🎉✨<br><u><a href="https://twitter.com/Handy_Bus" target="_blank" rel="noopener noreferrer">Handybus 트위터 링크</a></u> <u><a href="https://www.instagram.com/handy.bus?igsh=MXRtbDJiYWNoem9mbw==" target="_blank" rel="noopener noreferrer">Handybus 인스타 링크</a></u></b></p>
+
+                            <!-- 트위터 할인 이미지 제출란 -->
+                            <div class="mb-4">
+                                <label for="twitter_image" class="block text-gray-700 text-sm font-bold mb-2">트위터 할인 이미지</label>
+                                <input type="file" id="twitter_image" name="twitter_image"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    accept="image/jpeg, image/png, image/gif">
+                            </div>  
+
+                            <!-- 인스타 할인 이미지 제출란 -->
+                            <div class="mb-4">
+                                <label for="instagram_image" class="block text-gray-700 text-sm font-bold mb-2">인스타 할인 이미지</label>
+                                <input type="file" id="instagram_image" name="instagram_image"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    accept="image/jpeg, image/png, image/gif">
+                            </div>
+
+                            <!-- 이름 입력란 -->
+                            <div class="mb-4">
+                                <label for="user-name" class="block text-gray-700 text-sm font-bold mb-2">이름:</label>
+                                <input type="text" id="user-name" name="user_name"
+                                    class="shadow appearance-none border rounded w-60 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    required>
+                            </div>
+
+                            <!-- 전화번호 입력란 -->
+                            <div class="mb-4">
+                                <label for="phone-number"
+                                    class="block text-gray-700 text-sm font-bold mb-2">전화번호:</label>
+                                <div class="flex">
+                                    <input type="tel" id="phone-number-1" name="phone_number_1" maxlength="3"
+                                        pattern="[0-9]*" inputmode="numeric"
+                                        class="w-20 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2"
+                                        required> -
+                                    <input type="tel" id="phone-number-2" name="phone_number_2" maxlength="4"
+                                        pattern="[0-9]*" inputmode="numeric"
+                                        class="w-20 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mx-2"
+                                        required> -
+                                    <input type="tel" id="phone-number-3" name="phone_number_3" maxlength="4"
+                                        pattern="[0-9]*" inputmode="numeric"
+                                        class="w-20 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2"
+                                        required>
+                                </div>
+                            </div>
+
+                            <!-- 탑승 인원수 (본인 포함) 입력란 -->
+                            <div class="mb-4">
+                                <label for="head-count" class="block text-gray-700 text-sm font-bold mb-2">탑승 인원수 (본인 포함):</label>
+                                <input type="number" id="head-count" name="head_count" min="1"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-8"
+                                    onchange="updateCompanionFields()" required>
+                            </div>
+
+                            <!-- 동승인 정보 입력란 (동적 생성) -->
+                            <div id="companions-container" class="mb-4"></div>
+
+                            <!-- 유입 경로 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">유입경로:</label>
+                                <select id="funnel" name="funnel" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                    <option value="" disabled selected hidden>유입 경로를 선택해주세요</option>
+                                    <option value="지인 추천">지인 추천</option>
+                                    <option value="트위터 차대절 검색 (인기 트윗)">트위터 차대절 검색 (인기 트윗)</option>
+                                    <option value="트위터 차대절 검색 (최신 트윗)">트위터 차대절 검색 (최신 트윗)</option>
+                                    <option value="핸디버스 기존 팔로우 유저 (팔로우하고 소식을 받던 중 내 가수의 차대절 글이 올라와서)">핸디버스 기존 팔로우 유저 (팔로우하고 소식을 받던 중 내 가수의 차대절 글이 올라와서)</option>
+                                    <option value="트위터 타임라인 노출 (검색하지 않았는데 피드에 갑자기 글이 떠서)">트위터 타임라인 노출 (검색하지 않았는데 피드에 갑자기 글이 떠서)</option>
+                                    <option value="위버스/팬카페">위버스/팬카페</option>
+                                    <option value="인스타">인스타</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+
+                            <!-- 기타 유입 경로 직접 입력란, 기본적으로 숨김 -->
+                            <div id="other-funnel-container" class="mb-4 hidden">
+                                <label for="other-funnel" class="block text-gray-700 text-sm font-bold mb-2">기타 유입 경로:</label>
+                                <input type="text" id="other-funnel" name="other_inflow" placeholder="기타 유입 경로 입력" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            </div>
+
+                            <!-- 환불 시 환불 받을 계좌번호 -->
+                            <div class="mb-4">
+                                <label for="refund-account-number" class="block text-gray-700 text-sm font-bold mb-2">환불 받을 계좌번호:</label>
+                                <input type="text" id="refund-account-number" name="refund_account_number"
+                                    class="shadow appearance-none border rounded w-60 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    required>
+                            </div>
+
+                            <!-- 부총대 모집란 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">부총대 지원:</label>
+                                <h1 class="mb-2 text-m">지원 대상: 성인, 전화번호 공개 가능</h1>
+                                <p class="mb-2 text-m">위 조건만 만족하시면 누구든 지원 가능합니다!</p>
+                                <p class="mb-2 text-m">명단 체크, 하행 장소 전파 등 버스 운행 과정에서 간단한 역할만 수행하시면 됩니다.</p>
+                                <p class="mb-2 text-m">친절한 가이드도 드리고 <strong>"대절료 절반 할인 혜택"</strong>이 있으니 부담없이 지원해주세요!😊</p>
+                                
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="sub_leader_recruitment" value="no" class="form-radio h-5 w-5 text-gray-600" checked>
+                                    <span class="ml-2 text-gray-700">아니요</span>
+                                </label>
+                                <label class="inline-flex items-center mr-2">
+                                    <input type="radio" name="sub_leader_recruitment" value="yes" class="form-radio h-5 w-5 text-gray-600">
+                                    <span class="ml-2 text-gray-700">네</span>
+                                </label>
+
+                            </div>
+
+                            <!-- 개인정보 동의 체크 -->
+                            <div class="privacy-consent mt-8 border border-gray-300 rounded-lg p-4">
+                                <h2 class="text-lg font-bold mb-2">개인정보 동의</h2>
+                                <div class="mb-4">
+                                    <p class="mb-4">{{ privacyConsent.content | linebreaks }}</p>
+                                    <label class="inline-flex items-center mt-3">
+                                        <input type="checkbox" name="privacy_consent" id="privacy_consent"
+                                            class="form-checkbox h-5 w-5 text-gray-600" required>
+                                        <span class="ml-2 text-gray-700">위 개인정보 처리방침에 동의합니다.</span>
+                                    </label>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <!-- 유의사항 -->
+                            <div class="notice-container mt-8 border border-gray-300 rounded-lg p-4">
+                                <h2 class="text-lg font-bold mb-2">⭐ 유의사항</h2>
+                                <div class="mb-4">
+                                    <p class="mb-4">✔️ 본 차대절은 입금 순서대로 마감됩니다.</p>
+                                    <p class="mb-4">🔵 최소 인원을 만족하는 즉시 대절 진행 확정합니다. 진행 지역 확정되는 대로 SNS를 통해 공지하겠습니다.<br>(최소 인원 부족으로 인한 대절 무산(환불) 가능성도 있습니다.)</p>
+                                    <p class="mb-4">❌ 어떠한 사유로든 차대절 환불은 불가능하며 양도 부탁드립니다 (양도 문의는 채널톡으로 부탁드려요)</p>
+                                    <p class="mb-4">✔️ 입금확인을 원하시는 경우 채널톡으로 입금자명, 탑승자명, 금액과 입금 날짜 및 시간을 보내주세요.<br>채널톡 링크 : <a href="https://pf.kakao.com/_AxncxhG" target="_blank">채널톡 바로가기</a></p>
+                                    <p class="mb-4">🚨 대절 환불 규정<br>최소 탑승인원 미달 : 전액 환불<br>주최측의 공연 취소 : 차대절 예약금 및 수수료를 제외한 금액 환불</p>
+                                    <p class="mb-4">❌ 이미 안내된 공지사항에 대해서는 답변을 드리지 않으며 공지사항을 숙지하지 않아 생기는 모든 문제는 총대가 책임지지 않습니다.</p>
+                                    <label class="inline-flex items-center mt-3">
+                                        <input type="checkbox" name="notice" id="notice" class="form-checkbox h-5 w-5 text-gray-600" required>
+                                        <span class="ml-2 text-gray-700">모든 유의사항을 확인했습니다.</span>
+                                    </label>
+                                </div>
+                            </div>                            
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">신청하기</button>
+                        </div>
+
+
+
+
+                    </form>
+
+
+                </main>
+            </div>
+        </div>
+        <footer class="border-t p-4 footer-fixed">
+            <p class="text-center">HandyBus</p>
+        </footer>
+    </div>
+
+    
+
+    <script>
+
+        var reservationInfo = JSON.parse('{{ reservationInfo|safe }}');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDateSelection(reservationInfo);
+            setupEventListeners();
+        });
+
+        document.addEventListener('change', function(event) {
+            if (event.target.matches('input[type="radio"][name^="upward_regions_places"], input[type="radio"][name^="downward_regions_places"]')) {
+                checkAllSelectionsMade(); // 추가: 장소 선택 변경 시 모든 선택 확인
+            }
+        });
+
+        function initializeDateSelection(reservationInfo) {
+            const datesDiv = document.getElementById('dates');
+            Object.keys(reservationInfo).forEach(dateStr => {
+                // 날짜 객체를 생성하고 옵션을 사용하여 형식화합니다.
+                const date = new Date(dateStr);
+                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+                const formattedDate = new Intl.DateTimeFormat('ko-KR', options).format(date);
+
+                // 라벨과 인풋 요소를 생성합니다.
+                const label = document.createElement('label');
+                label.classList.add('flex', 'items-center', 'mb-2');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'date';
+                input.value = dateStr;
+                input.classList.add('form-radio', 'h-5', 'w-5', 'text-gray-600', 'mr-2');
+
+                // 형식화된 날짜를 텍스트 노드로 생성합니다.
+                const textNode = document.createTextNode(' ' + formattedDate);
+                label.appendChild(input);
+                label.appendChild(textNode);
+                datesDiv.appendChild(label);
+            });
+        }
+
+
+        function setupEventListeners() {
+            document.querySelectorAll('input[name="date"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    document.querySelectorAll('input[name="trip_type"]').forEach(input => {
+                        input.checked = false;
+                    });
+                    resetSelectedPlaces();
+
+                    hideElement('trip-type-container');
+
+                    hideElement('upward-region-places-container');
+                    hideElement('downward-region-places-container');
+
+
+                    const selectedDate = this.value;
+                    displayRegionsAndPlacesForSelectedDate(selectedDate);
+                    showElement('trip-type-container');
+                });
+            });
+
+            document.querySelectorAll('input[name="trip_type"]').forEach(input => {
+                input.addEventListener('change', handleTripTypeChange);
+            });
+        }
+
+        function displayRegionsAndPlacesForSelectedDate(selectedDate) {
+            resetSelectedPlaces();
+
+            showElement('trip-type-container');
+        }
+
+        function handleTripTypeChange() {
+            const selectedTripType = document.querySelector('input[name="trip_type"]:checked')?.value;
+            const selectedDate = document.querySelector('input[name="date"]:checked')?.value;
+
+            // 모든 장소 선택 컨테이너를 숨깁니다.
+            hideElement('upward-region-places-container');
+            hideElement('downward-region-places-container');
+
+            if (selectedDate && reservationInfo[selectedDate]) {
+                if (selectedTripType === 'round_trip' || selectedTripType === 'one_way_to') {
+                    showElement('upward-region-places-container');
+                    const upwardPlaces = reservationInfo[selectedDate]['upward'] || {};
+                    populateRegionsPlaces(upwardPlaces, 'upward_regions_places');
+                }
+                if (selectedTripType === 'round_trip' || selectedTripType === 'one_way_back') {
+                    showElement('downward-region-places-container');
+                    const downwardPlaces = reservationInfo[selectedDate]['downward'] || {};
+                    populateRegionsPlaces(downwardPlaces, 'downward_regions_places');
+                }
+            }
+
+            checkAllSelectionsMade();
+        }
+
+
+
+        function resetSelectedPlaces() {
+            document.querySelectorAll('input[type="radio"][name^="upward_regions_places"], input[type="radio"][name^="downward_regions_places"]').forEach(input => {
+                input.checked = false;
+            });
+        }
+
+        function displayRegionsAndPlaces(selectedDate, tripType) {
+            const data = reservationInfo[selectedDate] && reservationInfo[selectedDate][tripType];
+            const containerId = tripType === 'upward' ? 'upward-region-places-container' : 'downward-region-places-container';
+
+            // 컨테이너에 해당하는 제목 표시
+            const container = document.getElementById(containerId);
+            container.style.display = 'block'; // 컨테이너를 표시
+            const legend = container.querySelector('legend');
+            legend.textContent = tripType === 'upward' ? '상행 승차 지역 및 장소 선택:' : '하행 하차 지역 및 장소 선택:';
+
+            if (!data || Object.keys(data).length === 0) {
+                displayMessage('해당 여행 유형에 대한 데이터가 없습니다.', containerId);
+                return;
+            }
+
+            populateRegionsPlaces(data, containerId);
+        }
+
+        function populateRegionsPlaces(data, placesContainerId) {
+            const placesContainer = document.getElementById(placesContainerId);
+            if (!placesContainer) {
+                console.error('Places container not found:', placesContainerId);
+                return; // 장소 컨테이너가 없으면 함수 실행 중단
+            }
+
+            placesContainer.innerHTML = ''; // 기존 내용 초기화
+
+            // 지역 코드를 한국어 이름으로 매핑
+            const regionNames = {
+                daejeon: '대전',
+                daegu: '대구',
+                busan: '부산',
+                changwon: '창원',
+                sejong: '세종',
+                cheongju: '청주',
+                cheonan: '천안',
+
+            };
+
+            Object.keys(data).forEach(regionCode => {
+                data[regionCode].forEach(place => {
+                    const label = document.createElement('label');
+                    label.classList.add('flex', 'items-center', 'mb-2');
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = placesContainerId; // 동일한 이름을 가진 라디오 버튼 그룹
+                    input.value = `${regionCode} - ${place.name} - ${place.time}`;
+                    input.classList.add('form-radio', 'h-5', 'w-5', 'text-gray-600', 'mr-2'); // ml-2 클래스 추가
+                    
+                    // regionCode 대신 regionNames를 사용하여 지역명을 표시
+                    const textContent = `${regionNames[regionCode] || regionCode} - ${place.name}`;
+                    const text = document.createTextNode(textContent);
+
+                    label.appendChild(input);
+                    label.appendChild(text);
+                    placesContainer.appendChild(label);
+                });
+            });
+        }
+
+
+        function checkAllSelectionsMade() {
+            const dateSelected = document.querySelector('input[name="date"]:checked') !== null;
+            const tripTypeSelected = document.querySelector('input[name="trip_type"]:checked') !== null;
+            let upwardSelected = true, downwardSelected = true;
+
+            // 상행 선택이 필요한 경우 확인
+            if (document.getElementById('upward-region-places-container').style.display !== 'none') {
+                upwardSelected = document.querySelector('input[type="radio"][name="upward_regions_places"]:checked') !== null;
+            }
+
+            // 하행 선택이 필요한 경우 확인
+            if (document.getElementById('downward-region-places-container').style.display !== 'none') {
+                downwardSelected = document.querySelector('input[type="radio"][name="downward_regions_places"]:checked') !== null;
+            }
+
+            // 모든 조건이 충족되면 예약 정보 컨테이너 표시, 아니면 숨김
+            if (dateSelected && tripTypeSelected && upwardSelected && downwardSelected) {
+                showElement('user-info-container');
+            } else {
+                hideElement('user-info-container');
+            }
+        }
+
+
+        function showElement(elementId) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                element.style.display = 'block';
+            }
+        }
+
+        function hideElement(elementId) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        function displayMessage(message, containerId) {
+            const containerDiv = document.getElementById(containerId);
+            containerDiv.innerHTML = `<p class="text-red-500">${message}</p>`;
+            showElement(containerId);
+        }
+
+        function updateCompanionFields() {
+            const companionCount = document.getElementById('head-count').value - 1;
+            const companionsContainer = document.getElementById('companions-container');
+            companionsContainer.innerHTML = '';
+            for (let i = 0; i < companionCount; i++) {
+                const companionDiv = document.createElement('div');
+                companionDiv.classList.add('mb-4');
+                const nameDiv = document.createElement('div');
+                nameDiv.classList.add('mb-4');
+                nameDiv.innerHTML = `<label for="companion-name-${i}" class="block text-gray-700 text-sm font-bold mb-2">동승인 ${i + 1} 이름:</label>
+                    <input type="text" id="companion-name-${i}" name="companion_${i + 1}_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>`;
+                const phoneDiv = document.createElement('div');
+                phoneDiv.classList.add('mb-4');
+                phoneDiv.innerHTML = `<label for="companion-phone-${i}" class="block text-gray-700 text-sm font-bold mb-2">동승인 ${i + 1} 전화번호:</label>
+                    <div class="flex"><input type="tel" id="companion-phone-${i}-1" name="companion_${i + 1}_phone_1" maxlength="3" pattern="[0-9]*" inputmode="numeric" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2" required> - 
+                    <input type="tel" id="companion-phone-${i}-2" name="companion_${i + 1}_phone_2" maxlength="4" pattern="[0-9]*" inputmode="numeric" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mx-2" required> - 
+                    <input type="tel" id="companion-phone-${i}-3" name="companion_${i + 1}_phone_3" maxlength="4" pattern="[0-9]*" inputmode="numeric" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2" required></div>`;
+                companionDiv.appendChild(nameDiv);
+                companionDiv.appendChild(phoneDiv);
+                companionsContainer.appendChild(companionDiv);
+            }
+        }
+
+
+
+        var hamburger = document.getElementById('hamburger');
+        var navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', function() {
+            navMenu.classList.toggle('open');
+        });
+
+        // Close Navigation Menu when clicking outside
+        document.addEventListener('click', function(event) {
+            var isClickInsideMenu = navMenu.contains(event.target);
+            var isClickInsideHamburger = hamburger.contains(event.target);
+
+            if (!isClickInsideMenu && !isClickInsideHamburger && navMenu.classList.contains('open')) {
+                navMenu.classList.remove('open');
+                hamburger.classList.remove('open');
+            }
+        });
+
+        function toggleContent(date) {
+            var content = document.getElementById("content-" + date);
+            var icon = document.getElementById("icon-" + date);
+            if (content.classList.contains("hidden")) {
+                content.classList.remove("hidden");
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.style.transform = "rotate(90deg)";
+            } else {
+                content.classList.add("hidden");
+                content.style.maxHeight = "0";
+                icon.style.transform = "rotate(0deg)";
+            }
+        }
+
+        // 드롭다운 메뉴의 변경사항을 감지하여 '기타'가 선택되었을 때 입력란을 표시
+        document.getElementById('funnel').addEventListener('change', function() {
+            var otherFunnelContainer = document.getElementById('other-funnel-container');
+            if (this.value === '기타') { // 'other'를 '기타'로 변경합니다.
+                otherFunnelContainer.classList.remove('hidden');
+            } else {
+                otherFunnelContainer.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('funnel').addEventListener('change', function() {
+            var otherFunnelContainer = document.getElementById('other-funnel-container');
+            var otherFunnelInput = document.getElementById('other-funnel');
+            
+            if (this.value === '기타') {
+                // '기타'가 선택되었을 때 입력란을 표시하고 필수 입력으로 설정
+                otherFunnelContainer.classList.remove('hidden');
+                otherFunnelInput.required = true;
+            } else {
+                // '기타'가 아닌 다른 옵션이 선택되었을 때 입력란을 숨기고 필수 입력 요구를 제거
+                otherFunnelContainer.classList.add('hidden');
+                otherFunnelInput.required = false;
+                // 선택이 변경되었을 때, 기타 입력란의 값을 초기화하면 사용자가 다른 선택지를 선택했다가 다시 '기타'를 선택할 경우를 대비하여 이전 입력값이 남아있지 않도록 합니다.
+                otherFunnelInput.value = '';
+            }
+        });
+
+
+
+    </script>
+
+    <style>
+        /* 기본 모바일 스타일 */
+        .mobile-container {
+            max-width: 100%;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
+
+        }
+
+        /* 넓은 화면을 위한 스타일 (예: 768px 이상) */
+        @media (min-width: 768px) {
+            .mobile-container {
+                max-width: 768px;
+                /* 최대 너비 제한 */
+                margin: 0 auto;
+                /* 중앙 정렬 */
+                z-index: 1;
+            }
+
+            .header-fixed,
+            footer {
+                max-width: 768px;
+                /* 최대 너비 제한 */
+                margin-left: auto;
+                margin-right: auto;
+                z-index: 1;
+            }
+
+        }
+
+        /* 로고 컨테이너 스타일 */
+        .logo-container {
+            display: flex;
+            /* 로고를 가운데 정렬하기 위해 flexbox를 사용합니다 */
+            justify-content: center;
+            /* 가로 중앙 정렬 */
+            align-items: center;
+            /* 세로 중앙 정렬 */
+            width: 70%;
+            /* 컨테이너의 너비를 헤더 너비로 설정 */
+        }
+
+        .logo {
+            height: auto;
+            /* 이미지의 높이를 자동으로 조절하여 비율 유지 */
+            max-height: 70%;
+            /* 로고 이미지의 최대 높이를 헤더 높이의 70%로 제한 */
+            justify-content: center;
+            /* 가로 중앙 정렬 */
+            align-items: center;
+            /* 세로 중앙 정렬 */
+        }
+
+        .header-fixed {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #00C896;
+            color: #ffffff;
+            width: 100%;
+            min-height: 50px;
+            max-height: 100px;
+            position: fixed; /* 헤더를 화면 상단에 고정 */
+            top: 0; /* 화면의 맨 위에 위치 */
+            left: 0; /* 화면의 왼쪽 끝에 위치 */
+            right: 0; /* 화면의 오른쪽 끝에 위치 */
+            justify-content: space-between; /* 가로 방향 정렬 조정 */
+            z-index: 1000; /* 헤더가 다른 요소들 위에 나타나도록 z-index 설정 */
+        }
+
+        .footer-fixed {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #00C896;
+            color: #ffffff;
+            width: 100%;
+            z-index: 1;
+            position: fixed; /* footer를 화면 하단에 고정 */
+            bottom: 0; /* 화면의 맨 아래에 위치 */
+            left: 0; /* 화면의 왼쪽 끝에 위치 */
+            right: 0; /* 화면의 오른쪽 끝에 위치 */
+        }
+
+        /* Hamburger Icon & Navigation Menu Styles */
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 21px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #333;
+        }
+
+        .hamburger.open div:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open div:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.open div:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .nav-menu {
+            position: fixed; /* 고정 위치 */
+            top: 0; /* 상단에 맞춤 */
+            right: 0; /* 오른쪽에 맞춤 */
+            height: 100vh; /* 전체 화면 높이 */
+            width: 250px; /* 네비게이션 바의 너비 */
+            background: #f3f4f6; /* 배경색 */
+            transform: translateX(100%); /* 네비게이션 바를 오른쪽으로 완전히 이동 */
+            transition: transform 0.3s; /* 부드러운 전환 효과 */
+            z-index: 50; /* z-index 값을 통해 다른 요소들 위에 표시 */
+        }
+
+        .nav-menu.open {
+            transform: translateX(0); /* 화면 안으로 슬라이드 */
+        }
+
+        .toggle-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out;
+        padding: 0 20px; /* 내용이 보일 때의 패딩, 토글 닫힐 때 0으로 설정 필요 */
+        }
+        /* 내용 보이기/숨기기 전환 애니메이션 */
+        .toggle-content.open {
+            max-height: 100vh; /* 충분히 큰 값으로 설정하여 모든 내용이 표시되도록 함 */
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        #announcement-container .region-details, #announcement-container .region-status {
+            padding-left: 20px; /* 세부 정보와 대절 현황에 추가 패딩 적용 */
+        }
+    </style>
+
+</body>
+
+</html>

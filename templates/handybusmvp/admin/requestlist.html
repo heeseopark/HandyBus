@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="border-b p-4 header-fixed bg-gray-400">
+
+        <div class="flex justify-between items-center mt-4 mb-4">
+            <h1 class="text-xl font-bold">대절 요청 관리자 페이지</h1>
+            <a href="{% url 'admin:concertadmin' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold px-4 rounded">
+                관리자 페이지 돌아가기
+            </a> 
+        </div>
+
+    </header>
+
+    <div class="container mx-auto mt-10">
+        <h1 class="text-2xl font-bold mb-5">대절 요청 목록</h1>
+        <table class="table-auto w-full">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2">이름</th>
+                    <th class="px-4 py-2">전화번호</th>
+                    <th class="px-4 py-2">대절 요청 지역</th>
+                    <th class="px-4 py-2">대절 요청 내용</th>
+                    <th class="px-4 py-2">생성시간</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                    <tr class="border-b">
+                        <td class="px-4 py-2">{{ request.name }}</td>
+                        <td class="px-4 py-2">{{ request.phone_number }}</td>
+                        <td class="px-4 py-2">{{ request.region }}</td>
+                        <td class="px-4 py-2">{{ request.request_content }}</td>
+                        <td class="px-4 py-2">{{ request.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    
+    <footer class="border-t p-4 footer-fixed bg-gray-400">
+        <p class="text-center">HandyBus 관리자 페이지</p>
+    </footer>
+
+    <style>
+        .footer-fixed {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            z-index: 1;
+            position: fixed; /* footer를 화면 하단에 고정 */
+            bottom: 0; /* 화면의 맨 아래에 위치 */
+            left: 0; /* 화면의 왼쪽 끝에 위치 */
+            right: 0; /* 화면의 오른쪽 끝에 위치 */
+        }
+
+    </style>
+
+    <script>
+
+    </script>
+    
+    
+    
+</body>
+
+</html>
